@@ -1,0 +1,7 @@
+{
+  "PROPERTIES": {
+    "DEBUG_ENABLE": "true",
+    "PROTOCOL": "http",
+    "HOST": "users.bugred.ru"
+  }
+}
