@@ -99,11 +99,13 @@ HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getProfile(propert
 mvn gatling:test -Dgatling.simulationClass=gatling.users.authorization.AuthorizationAdminTest
 ```
 
-## Запуск тестов через Gitlab CI-CD
+## Запуск тестов через Jenkins
 
 Для запуска нагрузочных тестов используется Json.
 
 Пример Json профиля нагрузки:
+
+![jenkins.png](img/jenkins.png)
 
 ```json
 {
