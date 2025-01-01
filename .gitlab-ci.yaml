@@ -1,28 +1,31 @@
+image: ruby:3.1
+
 stages:
   - load_testing
 
+before_script:
+  - apt-get update && apt-get install -y maven default-jdk
+
 start_authorization_test:
-  stage: authorization_test
+  stage: load_testing
   script:
     - mvn gatling:test -Dgatling.simulationClass=gatling.users.authorization.AuthorizationAdminTest
     - mvn gatling:test -Dgatling.simulationClass=gatling.users.authorization.AuthorizationUserTest
+  parallel: 2
 
 start_registration_test:
-  stage: registration_test
+  stage: load_testing
   script:
     - mvn gatling:test -Dgatling.simulationClass=gatling.users.registration.RegistrationTest
+  parallel: 2
 
 start_loading_avatar_test:
-  stage: loading_avatar_test
+  stage: load_testing
   script:
     - mvn gatling:test -Dgatling.simulationClass=gatling.users.loading_avatar.LoadingAvatarTest
+  parallel: 2
 
 test:
   stage: load_testing
   script:
     - echo "Running load tests"
-  parallel:
-    matrix:
-      - JOB: "start_authorization_test"
-      - JOB: "start_registration_test"
-      - JOB: "start_loading_avatar_test"
