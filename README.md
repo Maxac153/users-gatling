@@ -95,8 +95,26 @@ HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getProfile(propert
 
 Пример команды запуска:
 
+### Запуск через maven
+
+Команда для запуска теста через maven:
+
 ```bash
 mvn gatling:test -Dgatling.simulationClass=gatling.users.authorization.AuthorizationAdminTest
+```
+
+### Запуск через jar
+
+Команда для сборки jar архива перед запуском теста:
+
+```bash
+mvn clean package
+```
+
+Запуск теста через jar:
+
+```bash
+java -cp target/performance-test-gatling.jar io.gatling.app.Gatling -s gatling.users.authorization.AuthorizationAdminTest
 ```
 
 ## Запуск тестов через Jenkins
