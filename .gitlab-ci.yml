@@ -1,31 +1,22 @@
-image: ruby:3.1
-
 stages:
   - load_testing
 
-before_script:
-  - apt-get update && apt-get install -y maven default-jdk
-
-start_authorization_test:
+load_tests:
   stage: load_testing
+  tags:
+    - ${GENERATOR}
+  before_script:
+    - apt-get update && apt-get install -y maven default-jdk
   script:
-    - mvn gatling:test -Dgatling.simulationClass=gatling.users.authorization.AuthorizationAdminTest
-    - mvn gatling:test -Dgatling.simulationClass=gatling.users.authorization.AuthorizationUserTest
-  parallel: 2
-
-start_registration_test:
-  stage: load_testing
-  script:
-    - mvn gatling:test -Dgatling.simulationClass=gatling.users.registration.RegistrationTest
-  parallel: 2
-
-start_loading_avatar_test:
-  stage: load_testing
-  script:
-    - mvn gatling:test -Dgatling.simulationClass=gatling.users.loading_avatar.LoadingAvatarTest
-  parallel: 2
-
-test:
-  stage: load_testing
-  script:
-    - echo "Running load tests"
+    - echo "Запуск теста с параметрами:"
+    - echo "JOB NAME - ${JOB_NAME}"
+    - echo "GATLING SCRIPT - ${GATLING_SCRIPT}"
+    - echo "${GATLING_SCRIPT}" > ./script.sh
+    - chmod +x ./script.sh
+    - ./script.sh
+  artifacts:
+    paths:
+      - ./target/gatling/
+    expire_in: 1 week
+  rules:
+    - if: '$GENERATOR != "" && $JOB_NAME != "" && $GATLING_SCRIPT != ""'

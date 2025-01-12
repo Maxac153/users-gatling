@@ -53,13 +53,24 @@ public class PropertyHelper {
         }
 
         // Общие параметры из системы
-        TestParam systemCommonProperties = gson.fromJson(System.getProperty("COMMON_SETTINGS"), TestParam.class);
-        if (systemCommonProperties != null)
+        String commonSettings = System.getProperty("COMMON_SETTINGS");
+        if (commonSettings != null) {
+            TestParam systemCommonProperties = gson.fromJson(commonSettings
+                            .replace("\"", "")
+                            .replace("\\", ""),
+                    TestParam.class
+            );
             properties.putAll(systemCommonProperties.getProperties());
+        }
 
         // Параметры теста и параметры профиля из системы
-        TestParam systemTestProperties = gson.fromJson(System.getProperty("TEST_SETTINGS"), TestParam.class);
-        if (systemTestProperties != null) {
+        String testSettings = System.getProperty("TEST_SETTINGS");
+        if (testSettings != null) {
+            TestParam systemTestProperties = gson.fromJson(testSettings
+                            .replace("\"", "")
+                            .replace("\\", ""),
+                    TestParam.class
+            );
             properties.putAll(systemTestProperties.getProperties());
             profile = gson.toJson(systemTestProperties.getProfile());
         }

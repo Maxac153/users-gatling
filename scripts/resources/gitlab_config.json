@@ -1,0 +1,7 @@
+{
+    "GITLAB_URL": "192.168.31.216",
+    "PROJECT_ID": "1",
+    "TRIGGER_TOKEN": "glptt-de29911bb8e5194af451748f87518c273eb09f59",
+    "REF": "main",
+    "JOB_NAME": "load_tests"
+}

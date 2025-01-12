@@ -1,0 +1,72 @@
+{
+  "TESTS_PARAM": [
+    {
+      "JOB": {
+        "GENERATOR": "test",
+        "TEST_NAME": "AuthorizationAdminTest",
+        "TEST_PATH": "gatling.users.authorization"
+      },
+      "PROFILE": [
+        {
+          "SCENARIO_NAME": "AUTHORIZATION_ADMIN_SCENARIO",
+          "STEPS": [
+            {
+              "STAR_TPS": 0.0,
+              "END_TPS": 1.0,
+              "RAMP_TIME": 0.5,
+              "HOLD_TIME": 1.0
+            },
+            {
+              "STAR_TPS": 1.0,
+              "END_TPS": 1.5,
+              "RAMP_TIME": 1.0,
+              "HOLD_TIME": 1.0
+            }
+          ]
+        }
+      ],
+      "PROPERTIES": {
+        "GROUP": "2"
+      }
+    },
+    {
+      "JOB": {
+        "GENERATOR": "test2",
+        "TEST_NAME": "AuthorizationAdminTest",
+        "TEST_PATH": "gatling.users.authorization"
+      },
+      "PROFILE": [
+        {
+          "SCENARIO_NAME": "AUTHORIZATION_ADMIN_SCENARIO",
+          "STEPS": [
+            {
+              "STAR_TPS": 0.0,
+              "END_TPS": 2.0,
+              "RAMP_TIME": 0.5,
+              "HOLD_TIME": 1.0
+            },
+            {
+              "STAR_TPS": 2.0,
+              "END_TPS": 2.0,
+              "RAMP_TIME": 1.0,
+              "HOLD_TIME": 1.0
+            }
+          ]
+        }
+      ],
+      "PROPERTIES": {
+        "GROUP": "2"
+      }
+    }
+  ],
+  "COMMON_SETTINGS": {
+    "MAVEN": {
+      "MODULE_NAME": "USERS",
+      "PERCENT_PROFILE": 100.0
+    },
+    "PROPERTIES": {
+      "DEBUG_ENABLE": "false",
+      "REDIS_KEY_READ": "users_credentials"
+    }
+  }
+}

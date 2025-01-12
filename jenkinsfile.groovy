@@ -1,4 +1,5 @@
 #!groovy
+
 import groovy.json.JsonBuilder
 
 import java.text.SimpleDateFormat
