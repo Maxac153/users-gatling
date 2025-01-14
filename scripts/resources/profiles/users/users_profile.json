@@ -31,7 +31,7 @@
     },
     {
       "JOB": {
-        "GENERATOR": "test2",
+        "GENERATOR": "test",
         "TEST_NAME": "AuthorizationAdminTest",
         "TEST_PATH": "gatling.users.authorization"
       },

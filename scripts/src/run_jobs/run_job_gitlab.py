@@ -40,9 +40,18 @@ class RunJobGitLab:
 
         # Проверка ответа
         if response.status == 201:
-            print(f"Название модуля: '{module_name}'")
-            print(f"Генератор нагрузки: '{generator}'")
-            print(f"Pipline '{self.job_name}' успешно запущен")
+            mn = f"| Название модуля: '{module_name}'"
+            g = f"| Генератор нагрузки: '{generator}'"
+            jn = f"| Job '{self.job_name}' успешно запущена"
+
+            max_len = len(max([mn, g, jn], key=len))
+            print("|" + "-" * max_len + "|")
+            print(mn + " " * (max_len - len(mn)) + " |")
+            print("|" + "-" * max_len + "|")
+            print(g + " " * (max_len - len(g)) + " |")
+            print("|" + "-" * max_len + "|")
+            print(jn + " " * (max_len - len(jn)) + " |")
+            print("|" + "-" * max_len + "|")
         else:
             print(f"Ошибка при запуске pipline: {response.status} - {response_data.decode()}")
 

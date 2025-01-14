@@ -1,6 +1,6 @@
 {
   "PROPERTIES": {
-    "DEBUG_ENABLE": "true",
+    "DEBUG_ENABLE": "false",
     "PROTOCOL": "http",
     "HOST": "users.bugred.ru"
   }

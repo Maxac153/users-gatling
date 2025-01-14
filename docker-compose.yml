@@ -1,22 +1,9 @@
 version: '3.8'
 
 services:
-  gitlab:
-    image: gitlab/gitlab-ce:latest
-    restart: always
-    hostname: 'gitlab.example.com'
+  influxdb:
+    container_name: influxdb
+    build: influxdb
     ports:
-      - '80:80'
-      - '443:443'
-      - '22:22'
-    volumes:
-      - /opt/gitlab/config:/etc/gitlab
-      - /opt/gitlab/logs:/var/log/gitlab
-      - /opt/gitlab/data:/var/opt/gitlab
-
-  gitlab-runner:
-    image: gitlab/gitlab-runner:latest
-    restart: always
-    volumes:
-      - /opt/gitlab-runner/config:/etc/gitlab-runner
-      - /var/run/docker.sock:/var/run/docker.sock
+      - '8086:8086'
+      - '2003:2003'

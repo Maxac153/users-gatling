@@ -11,7 +11,7 @@ from src.run_jobs.run_job_gitlab import RunJobGitLab
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         # Config gitlab
-        gitlab_config = GitLabConfig('resources/gitlab_config.json')
+        gitlab_config = GitLabConfig('scripts/resources/gitlab_config.json')
 
         # Считываем из системы какие модули надо запустить
         profile_paths = sys.argv[1:]

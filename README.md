@@ -11,6 +11,7 @@
 ### Структура папки common
 
 * **common** - Общие классы для тестов;
+  * **groups** - Группа действий;
   * **helpers** - Вспомогательные классы;
   * **models** - PoJo классы для сериализации и десериализации;
   * **steps** - Общие шаги для тестов;
@@ -20,6 +21,7 @@
 * **users** - Модуль;
   * **authorization** - Тестовый сценарий модуля users;
   * **loading_avatar** - Тестовый сценарий модуля users;
+    * **groups** - Группа действий; 
     * **scenario** - Сценарии;
     * **steps** - Шаги в сценарии;
   * **registration** - Тестовый сценарий модуля users.
@@ -121,9 +123,9 @@ java -cp target/performance-test-gatling.jar io.gatling.app.Gatling -s gatling.u
 
 Для запуска нагрузочных тестов используется Json.
 
-Пример Json профиля нагрузки:
-
 ![jenkins.png](img/jenkins.png)
+
+Пример Json профиля нагрузки:
 
 ```json
 {
@@ -191,3 +193,114 @@ java -cp target/performance-test-gatling.jar io.gatling.app.Gatling -s gatling.u
     * **MODULE_NAME** - Название модуля (используется для сбора логов);
     * **PERCENT_PROFILE** - Процент от профиля;
   * **PROPERTIES** - Дополнительные общие параметры для всех тестов.
+
+## Запуск тестов через Gitlab
+
+![gitlab.png](img/gitlab.png)
+
+Для запуска нагрузочных тестов используется Json.
+
+Пример Json профиля нагрузки:
+
+```json
+{
+  "TESTS_PARAM": [
+    {
+      "JOB": {
+        "GENERATOR": "test",
+        "TEST_NAME": "AuthorizationAdminTest",
+        "TEST_PATH": "gatling.users.authorization"
+      },
+      "PROFILE": [
+        {
+          "SCENARIO_NAME": "AUTHORIZATION_ADMIN_SCENARIO",
+          "STEPS": [
+            {
+              "STAR_TPS": 0.0,
+              "END_TPS": 1.0,
+              "RAMP_TIME": 0.5,
+              "HOLD_TIME": 1.0
+            },
+            {
+              "STAR_TPS": 1.0,
+              "END_TPS": 1.5,
+              "RAMP_TIME": 1.0,
+              "HOLD_TIME": 1.0
+            }
+          ]
+        }
+      ],
+      "PROPERTIES": {
+        "GROUP": "2"
+      }
+    }
+  ],
+  "COMMON_SETTINGS": {
+    "MAVEN": {
+      "MODULE_NAME": "USERS",
+      "PERCENT_PROFILE": 100.0
+    },
+    "PROPERTIES": {
+      "DEBUG_ENABLE": "false",
+      "REDIS_KEY_READ": "users_credentials"
+    }
+  }
+}
+```
+
+Описание параметров:
+
+* **TESTS_PARAM** - Параметры тестов;
+  * **JOB** - Параметры для Java машины;
+    * **GENERATOR** - Где будет запускаться тесты;
+    * **TEST_NAME** - Наименования тестового класса;
+    * **TEST_FOLDER** - Путь до класса в проекте;
+  * **PROFILE** - Параметры профиля нагрузки;
+    * **Array profile** - Массив профилей для разных катушек;
+      * **SCENARIO_NAME** - Наименование катушки;
+      * **STEPS** - Шаги профиля: **STAR_TPS** - подаваемая нагрузка (с какого значения начинаем), **END_TPS** - подаваемая нагрузка (на какое значение выходим), **RAMP_TIME** - выход на заданную интенсивность (мин) и **HOLD_TIME** - удержание нагрузки (мин);
+  * **PROPERTIES** - Дополнительные параметры для теста.
+
+
+* **COMMON_SETTINGS** - Параметры для все тестов;
+  * **MAVEN** - Параметры для bash скрипта;
+    * **MODULE_NAME** - Название модуля (используется для сбора логов);
+    * **PERCENT_PROFILE** - Процент от профиля;
+  * **PROPERTIES** - Дополнительные общие параметры для всех тестов.
+
+
+### Запуск тестов через Python + Gitlab
+
+Путь к скрипту **./scripts/main.py**
+
+Параметры скрипта:
+
+В качестве параметров скрипт принимает массив путей к профилям нагрузки **(1 профиль == 1 модуль)**.
+
+Пример параметра **./scripts/resources/profiles/users/users_profile.json**.
+
+Пример команды для запуска python скрипта:
+
+```python
+python3 ./scripts/main.py ./scripts/resources/profiles/users/users_profile.json
+```
+
+Результат запуска:
+
+```
+|-----------------------------------|
+| Название модуля: 'USERS'          |
+|-----------------------------------|
+| Генератор нагрузки: 'test'        |
+|-----------------------------------|
+| Job 'load_tests' успешно запущена |
+|-----------------------------------|
+```
+
+Что нужно добавить в проект:
+
+1. Мониторинг;
+2. В python скрипте выводить время теста (как в jenkins job);
+3. Записывать логи запуска python скрипта в файл;
+4. Разнести group в тестах по папкам в каждом модуле;
+5. Попробовать Redis (не через rust-redis-client).

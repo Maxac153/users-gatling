@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -12,7 +11,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <gatling.charts.highcharts.version>3.13.1</gatling.charts.highcharts.version>
+        <gatling.version>3.11.5</gatling.version>
         <commons.io.version>2.11.0</commons.io.version>
         <datafaker.version>2.0.2</datafaker.version>
         <gson.version>2.9.0</gson.version>
@@ -28,7 +27,12 @@
         <dependency>
             <groupId>io.gatling.highcharts</groupId>
             <artifactId>gatling-charts-highcharts</artifactId>
-            <version>${gatling.charts.highcharts.version}</version>
+            <version>${gatling.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.gatling</groupId>
+            <artifactId>gatling-graphite</artifactId>
+            <version>${gatling.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
