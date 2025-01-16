@@ -10,12 +10,12 @@ public class AuthorizationScenario {
     public static ScenarioBuilder authorizationUserScenario(Map<String, Object> property) {
         return CoreDsl.scenario("users_authentication_user_scenario")
                 .exec(session -> session.setAll(property))
-                .exec(AuthorizationGroups.authorizationUserGroup);
+                .exec(AuthorizationGroups.authorizationUser);
     }
 
     public static ScenarioBuilder authorizationAdminScenario(Map<String, Object> property) {
         return CoreDsl.scenario("users_authentication_admin_scenario")
                 .exec(session -> session.setAll(property))
-                .exec(AuthorizationGroups.authorizationAdminGroup);
+                .exec(AuthorizationGroups.authorizationAdmin);
     }
 }

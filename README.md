@@ -297,10 +297,11 @@ python3 ./scripts/main.py ./scripts/resources/profiles/users/users_profile.json
 |-----------------------------------|
 ```
 
+## Мониторинг Grafana + InfluxDB + Graphite
+
 Что нужно добавить в проект:
 
 1. Мониторинг;
 2. В python скрипте выводить время теста (как в jenkins job);
 3. Записывать логи запуска python скрипта в файл;
-4. Разнести group в тестах по папкам в каждом модуле;
-5. Попробовать Redis (не через rust-redis-client).
+4. Попробовать Redis (не через rust-redis-client).
