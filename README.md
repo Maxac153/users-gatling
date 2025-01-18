@@ -11,7 +11,7 @@
 ### Структура папки common
 
 * **common** - Общие классы для тестов;
-  * **groups** - Группа действий;
+  * **groups** - Группа действий (UC - USER_CASE);
   * **helpers** - Вспомогательные классы;
   * **models** - PoJo классы для сериализации и десериализации;
   * **steps** - Общие шаги для тестов;
@@ -252,7 +252,7 @@ java -cp target/performance-test-gatling.jar io.gatling.app.Gatling -s gatling.u
 
 * **TESTS_PARAM** - Параметры тестов;
   * **JOB** - Параметры для Java машины;
-    * **GENERATOR** - Где будет запускаться тесты;
+    * **GENERATOR** - Где будут запускаться тесты;
     * **TEST_NAME** - Наименования тестового класса;
     * **TEST_FOLDER** - Путь до класса в проекте;
   * **PROFILE** - Параметры профиля нагрузки;
@@ -299,9 +299,34 @@ python3 ./scripts/main.py ./scripts/resources/profiles/users/users_profile.json
 
 ## Мониторинг Grafana + InfluxDB + Graphite
 
-Что нужно добавить в проект:
+Путь шаблона для Grafana: **./monitoring/Gatling Dashboard.json**.
 
-1. Мониторинг;
+![grafana.png](img/grafana.png)
+
+Перед первым запуском теста нужно развернуть influxDB и создать базу **gatlingdb**.
+
+```bash
+docker-compose up -d
+```
+
+С шаблоном отправки метрик в InfluxDB можно ознакомится в файле конфигурации **influxdb/influxdb.conf**.
+
+Пример шаблона:
+
+```text
+[[graphite]]
+        enabled = true
+        database = "gatlingdb"
+
+        templates = [
+                "gatling.*.*.*.* measurement.simulation.group.request.status.field"
+        ]
+```
+
+**Что нужно добавить в демо проект:**
+
+1. **Добавить таблицу по запросам (Название транзакции, количество запросов, процент успешных запрос, процент ошибочных запросов);**
 2. В python скрипте выводить время теста (как в jenkins job);
 3. Записывать логи запуска python скрипта в файл;
-4. Попробовать Redis (не через rust-redis-client).
+4. Попробовать Redis (не через rust-redis-client);
+5. Добавить троттлинг в тесты.
