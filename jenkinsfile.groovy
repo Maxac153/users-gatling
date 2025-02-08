@@ -44,27 +44,29 @@ class Settings {
 }
 
 class CreateScript {
-    def static private jsonBuildSettings(Settings settings, Double percentProfile) {
-        for (Profile profile in settings.PROFILE) {
+    def static private jsonBuildProfile(Profile[] profiles, Double percentProfile) {
+        for (Profile profile in profiles) {
             for (Steps step in profile.STEPS) {
                 step.STAR_TPS *= percentProfile
                 step.END_TPS *= percentProfile
             }
         }
-        return new JsonBuilder(settings).toString()
+        return new JsonBuilder(profiles).toString()
     }
 
-    def static private jsonBuildCommonSettings(CommonSettings commonSettings) {
+    def static private jsonBuildSettings(Map commonSettings) {
         return new JsonBuilder(commonSettings).toString()
     }
 
-    def static createScript(CommonSettings commonSettings, Settings settings) {
+    def static createScript(CommonSettings commonSettings, Settings testSettings) {
         def percentProfile = commonSettings.MAVEN.PERCENT_PROFILE / 100.0
         String script =
                 // Если запуск на другой машине
                 // "cd ${testParam.COMMON_SETTINGS.MAVEN.TEST_FOLDER_PATH}/${testParam.COMMON_SETTINGS.MAVEN.MODULE_NAME};\n" +
                 "mvn gatling:test -Dgatling.simulationClass=${settings.JOB.TEST_PATH}.${settings.JOB.TEST_NAME} " +
-                        '-DCOMMON_SETTINGS="' + jsonBuildCommonSettings(commonSettings) + '" -DTEST_SETTINGS="' + jsonBuildSettings(settings, percentProfile) + '"'
+                        '-DCOMMON_SETTINGS="' + jsonBuildSettings(commonSettings.PROPERTIES) +
+                        '" -DTEST_SETTINGS="' + jsonBuildSettings(testSettings.PROPERTIES) + '"'
+                        '" -DTEST_PROFILE="' + jsonBuildProfile(testSettings.PROFILE, percentProfile) + '"'
 
         return script
     }

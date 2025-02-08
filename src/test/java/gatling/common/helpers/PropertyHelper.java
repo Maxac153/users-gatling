@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import gatling.common.models.profile.Profile;
 import gatling.common.models.profile.Step;
-import gatling.common.models.profile.TestParam;
 import io.gatling.javaapi.core.OpenInjectionStep;
 
 import java.io.BufferedReader;
@@ -23,7 +22,7 @@ import static io.gatling.javaapi.core.CoreDsl.rampUsersPerSec;
 public class PropertyHelper {
     private static final Gson gson = new Gson();
 
-    public static String readProperty(String filePath) {
+    private static String readProperty(String filePath) {
         StringBuilder contentBuilder = new StringBuilder();
         try (InputStream inputStream = PropertyHelper.class.getClassLoader().getResourceAsStream(filePath)) {
             String line;
@@ -37,43 +36,30 @@ public class PropertyHelper {
         return contentBuilder.toString();
     }
 
-    public static Map<String, Object> readProperties(
-            String... propertiesPaths
-    ) {
+    public static Map<String, Object> readProperties(String... propertiesPaths) {
         HashMap<String, Object> properties = new HashMap<>();
 
-        // Параметры и профиль из файлов
-        for (String propertiesPath : propertiesPaths) {
-            TestParam testParam = gson.fromJson(PropertyHelper.readProperty(propertiesPath), TestParam.class);
-            if (testParam.getProperties() != null)
-                properties.putAll(testParam.getProperties());
-        }
+        // Параметры из файлов
+        Type type = new TypeToken<HashMap<String, String>>(){}.getType();
+        for (String propertiesPath : propertiesPaths)
+            properties.putAll(gson.fromJson(PropertyHelper.readProperty(propertiesPath), type));
 
         // Общие параметры из системы
         String commonSettings = System.getProperty("COMMON_SETTINGS");
-        if (commonSettings != null) {
-            TestParam systemCommonProperties = gson.fromJson(
-                    commonSettings,
-                    TestParam.class
-            );
-            properties.putAll(systemCommonProperties.getProperties());
-        }
+        if (commonSettings != null)
+            properties.putAll(gson.fromJson(commonSettings, type));
 
         // Параметры теста из системы
         String testSettings = System.getProperty("TEST_SETTINGS");
-        if (testSettings != null) {
-            TestParam systemTestProperties = gson.fromJson(
-                    testSettings,
-                    TestParam.class
-            );
-            properties.putAll(systemTestProperties.getProperties());
-        }
+        if (testSettings != null)
+            properties.putAll(gson.fromJson(testSettings, type));
 
         return properties;
     }
 
     public static HashMap<String, OpenInjectionStep[]> getProfile(String profilePath) {
         String systemProfile = System.getProperty("TEST_PROFILE");
+
         Type listType = new TypeToken<ArrayList<Profile>>(){}.getType();
         ArrayList<Profile> profiles = gson.fromJson(
                 Objects.requireNonNullElseGet(systemProfile, () -> PropertyHelper.readProperty(profilePath)),

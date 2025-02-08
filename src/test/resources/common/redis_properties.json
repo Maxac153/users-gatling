@@ -1,7 +1,5 @@
 {
-  "PROPERTIES": {
-    "REDIS_CLIENT_PROTOCOL": "http",
-    "REDIS_CLIENT_HOST": "localhost",
-    "REDIS_CLIENT_PORT": "8080"
-  }
+  "REDIS_CLIENT_PROTOCOL": "http",
+  "REDIS_CLIENT_HOST": "localhost",
+  "REDIS_CLIENT_PORT": "8080"
 }
