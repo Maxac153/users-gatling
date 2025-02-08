@@ -15,10 +15,12 @@ import static io.gatling.javaapi.core.OpenInjectionStep.atOnceUsers;
 public class AuthorizationAdminTest extends Simulation {
     public AuthorizationAdminTest() {
         Map<String, Object> property = PropertyHelper.readProperties(
-                "common/common_properties.json",
+                "common/common_properties.json"
+        );
+
+        HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getProfile(
                 "tests/users/authorization/authorization_admin_profile.json"
         );
-        HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getProfile(property);
 
         HttpProtocolBuilder httpProtocol = HttpDsl.http
                 .baseUrl(property.get("PROTOCOL") + "://" + property.get("HOST"))

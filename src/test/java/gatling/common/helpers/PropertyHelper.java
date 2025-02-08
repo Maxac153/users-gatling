@@ -15,6 +15,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static io.gatling.javaapi.core.CoreDsl.constantUsersPerSec;
 import static io.gatling.javaapi.core.CoreDsl.rampUsersPerSec;
@@ -37,52 +38,47 @@ public class PropertyHelper {
     }
 
     public static Map<String, Object> readProperties(
-            String... pathsProperties
+            String... propertiesPaths
     ) {
-        String profile = null;
         HashMap<String, Object> properties = new HashMap<>();
 
         // Параметры и профиль из файлов
-        for (String pathProperties : pathsProperties) {
-            TestParam testParam = gson.fromJson(PropertyHelper.readProperty(pathProperties), TestParam.class);
+        for (String propertiesPath : propertiesPaths) {
+            TestParam testParam = gson.fromJson(PropertyHelper.readProperty(propertiesPath), TestParam.class);
             if (testParam.getProperties() != null)
                 properties.putAll(testParam.getProperties());
-
-            if (testParam.getProfile() != null)
-                profile = gson.toJson(testParam.getProfile());
         }
 
         // Общие параметры из системы
         String commonSettings = System.getProperty("COMMON_SETTINGS");
         if (commonSettings != null) {
-            TestParam systemCommonProperties = gson.fromJson(commonSettings
-                            .replace("\"", "")
-                            .replace("\\", ""),
+            TestParam systemCommonProperties = gson.fromJson(
+                    commonSettings,
                     TestParam.class
             );
             properties.putAll(systemCommonProperties.getProperties());
         }
 
-        // Параметры теста и параметры профиля из системы
+        // Параметры теста из системы
         String testSettings = System.getProperty("TEST_SETTINGS");
         if (testSettings != null) {
-            TestParam systemTestProperties = gson.fromJson(testSettings
-                            .replace("\"", "")
-                            .replace("\\", ""),
+            TestParam systemTestProperties = gson.fromJson(
+                    testSettings,
                     TestParam.class
             );
             properties.putAll(systemTestProperties.getProperties());
-            profile = gson.toJson(systemTestProperties.getProfile());
         }
 
-        properties.put("PROFILE", profile);
         return properties;
     }
 
-    public static HashMap<String, OpenInjectionStep[]> getProfile(Map<String, Object> properties) {
-        Type profileListType = new TypeToken<ArrayList<Profile>>() {
-        }.getType();
-        ArrayList<Profile> profiles = gson.fromJson((String) properties.get("PROFILE"), profileListType);
+    public static HashMap<String, OpenInjectionStep[]> getProfile(String profilePath) {
+        String systemProfile = System.getProperty("TEST_PROFILE");
+        Type listType = new TypeToken<ArrayList<Profile>>(){}.getType();
+        ArrayList<Profile> profiles = gson.fromJson(
+                Objects.requireNonNullElseGet(systemProfile, () -> PropertyHelper.readProperty(profilePath)),
+                listType
+        );
 
         // Создание Map<threadGroupName, profile> профилей для каждой нагрузочной катушки в тесте
         HashMap<String, OpenInjectionStep[]> profileMap = new HashMap<>();

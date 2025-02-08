@@ -1,5 +1,4 @@
-{
-  "PROFILE": [
+[
     {
       "SCENARIO_NAME": "AUTHORIZATION_USER_SCENARIO",
       "STEPS": [
@@ -11,8 +10,4 @@
         }
       ]
     }
-  ],
-  "PROPERTIES": {
-    "REDIS_KEY_READ": "users_credentials"
-  }
-}
+]

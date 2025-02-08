@@ -1,5 +1,4 @@
-{
-  "PROFILE": [
+[
     {
       "SCENARIO_NAME": "AUTHORIZATION_ADMIN_SCENARIO",
       "STEPS": [
@@ -17,5 +16,4 @@
         }
       ]
     }
-  ]
-}
+]

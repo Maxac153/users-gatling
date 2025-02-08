@@ -1,30 +1,25 @@
-{
-  "PROFILE": [
-    {
-      "SCENARIO_NAME": "REGISTRATION_SCENARIO",
-      "STEPS": [
-        {
-          "STAR_TPS": 0.0,
-          "END_TPS": 1.0,
-          "RAMP_TIME": 3.0,
-          "HOLD_TIME": 2.0
-        },
-        {
-          "STAR_TPS": 1.0,
-          "END_TPS": 2.0,
-          "RAMP_TIME": 1.0,
-          "HOLD_TIME": 2.0
-        },
-        {
-          "STAR_TPS": 2.0,
-          "END_TPS": 1.0,
-          "RAMP_TIME": 1.0,
-          "HOLD_TIME": 2.0
-        }
-      ]
-    }
-  ],
-  "PROPERTIES": {
-    "REDIS_KEY_ADD": "users_credentials"
+[
+  {
+    "SCENARIO_NAME": "REGISTRATION_SCENARIO",
+    "STEPS": [
+      {
+        "STAR_TPS": 0.0,
+        "END_TPS": 1.0,
+        "RAMP_TIME": 3.0,
+        "HOLD_TIME": 2.0
+      },
+      {
+        "STAR_TPS": 1.0,
+        "END_TPS": 2.0,
+        "RAMP_TIME": 1.0,
+        "HOLD_TIME": 2.0
+      },
+      {
+        "STAR_TPS": 2.0,
+        "END_TPS": 1.0,
+        "RAMP_TIME": 1.0,
+        "HOLD_TIME": 2.0
+      }
+    ]
   }
-}
+]

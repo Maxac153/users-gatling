@@ -16,10 +16,12 @@ public class RegistrationTest extends Simulation {
     public RegistrationTest() {
         Map<String, Object> property = PropertyHelper.readProperties(
                 "common/common_properties.json",
-                "common/redis_properties.json",
+                "common/redis_properties.json"
+        );
+
+        HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getProfile(
                 "tests/users/registration/registration_profile.json"
         );
-        HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getProfile(property);
 
         HttpProtocolBuilder httpProtocol = HttpDsl.http
                 .baseUrl(property.get("PROTOCOL") + "://" + property.get("HOST"))
