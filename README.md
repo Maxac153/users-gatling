@@ -38,8 +38,11 @@ public class AuthorizationAdminTest extends Simulation {
             "common/common_properties.json",
             "tests/users/authorization/authorization_admin_profile.json"
     );
+    
     // Нагрузочный профиль
-    HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getProfile(property);
+    HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getProfile(
+            "tests/users/registration/registration_profile.json"
+    );
 
     // Настройки протокола
     HttpProtocolBuilder httpProtocol = HttpDsl.http
@@ -71,7 +74,10 @@ Map<String, Object> property = PropertyHelper.readProperties(
         "common/redis_properties.json", // Common Property Redis Param
         "tests/users/authorization/authorization_user_profile.json" // Test Property
 );
-HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getProfile(property); // Нагрузочный профиль
+
+HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getProfile(
+        "tests/users/registration/registration_profile.json"
+); // Нагрузочный профиль
 ```
 
 ## Правила именования
