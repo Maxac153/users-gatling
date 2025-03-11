@@ -26,6 +26,5 @@ public class RedisClientHelper {
                     .queryParam("add_mode", "#{redis_add_mode}")
                     .body(StringBody(session -> session.getString("json"))).asJson()
                     .check(status().is(201))
-
     );
 }

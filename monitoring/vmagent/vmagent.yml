@@ -1,0 +1,19 @@
+# base
+- action: graphite
+  match: "*.*.*.*.*.*"
+  labels:
+    __name__: "$1_$5"
+    simulation: "$2"
+    request: "$3"
+    status: "$4"
+
+# with prefix
+- action: graphite
+  match: "*.*.*.*.*.*.*"
+  labels:
+    __name__: "$1_$7"
+    host: "$2"
+    testID: "$3"
+    simulation: "$4"
+    request: "$5"
+    status: "$6"

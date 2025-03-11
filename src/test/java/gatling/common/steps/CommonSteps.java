@@ -8,7 +8,7 @@ import io.gatling.javaapi.http.HttpRequestActionBuilder;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 
-public class StepsCommon {
+public class CommonSteps {
     private static final Gson gson = new Gson();
 
     public static HttpRequestActionBuilder mainPage =

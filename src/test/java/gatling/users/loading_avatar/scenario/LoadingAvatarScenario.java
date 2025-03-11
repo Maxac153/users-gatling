@@ -1,9 +1,7 @@
 package gatling.users.loading_avatar.scenario;
 
 import gatling.common.groups.AuthorizationGroups;
-import gatling.common.steps.StepsCommon;
-import gatling.users.loading_avatar.gropus.LoadingAvatarGroups;
-import gatling.users.loading_avatar.steps.Steps;
+import gatling.users.loading_avatar.groups.LoadingAvatarGroups;
 import io.gatling.javaapi.core.CoreDsl;
 import io.gatling.javaapi.core.ScenarioBuilder;
 

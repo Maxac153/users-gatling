@@ -8,7 +8,7 @@ import java.util.Random;
 
 import static io.gatling.javaapi.http.HttpDsl.RawFileBodyPart;
 
-public class Steps {
+public class LoadingAvatarSteps {
     private static final Random rand = new Random();
     private static final String[] avatars = {
             "tests/users/loading_avatar/images/g-12.jpg",

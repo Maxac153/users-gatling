@@ -14,7 +14,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static io.gatling.javaapi.core.CoreDsl.constantUsersPerSec;
 import static io.gatling.javaapi.core.CoreDsl.rampUsersPerSec;
@@ -25,11 +24,14 @@ public class PropertyHelper {
     private static String readProperty(String filePath) {
         StringBuilder contentBuilder = new StringBuilder();
         try (InputStream inputStream = PropertyHelper.class.getClassLoader().getResourceAsStream(filePath)) {
-            String line;
+            if (inputStream == null)
+                throw new IOException("Resource not found: " + filePath);
+
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            while ((line = reader.readLine()) != null) {
+            String line;
+            while ((line = reader.readLine()) != null)
                 contentBuilder.append(line).append(System.lineSeparator());
-            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -47,12 +49,12 @@ public class PropertyHelper {
         // Общие параметры из системы
         String commonSettings = System.getProperty("COMMON_SETTINGS");
         if (commonSettings != null)
-            properties.putAll(gson.fromJson(commonSettings, type));
+            properties.putAll(gson.fromJson(commonSettings.replace("\"", ""), type));
 
         // Параметры теста из системы
         String testSettings = System.getProperty("TEST_SETTINGS");
         if (testSettings != null)
-            properties.putAll(gson.fromJson(testSettings, type));
+            properties.putAll(gson.fromJson(testSettings.replace("\"", ""), type));
 
         return properties;
     }
@@ -62,7 +64,7 @@ public class PropertyHelper {
 
         Type listType = new TypeToken<ArrayList<Profile>>(){}.getType();
         ArrayList<Profile> profiles = gson.fromJson(
-                Objects.requireNonNullElseGet(systemProfile, () -> PropertyHelper.readProperty(profilePath)),
+                (systemProfile == null) ? PropertyHelper.readProperty(profilePath) : systemProfile.replace("\"", ""),
                 listType
         );
 

@@ -23,7 +23,7 @@
   * **loading_avatar** - Тестовый сценарий модуля users;
     * **groups** - Группа действий; 
     * **scenario** - Сценарии;
-    * **steps** - Шаги в сценарии;
+    * **steps** - Шаги в группе;
   * **registration** - Тестовый сценарий модуля users.
 
 ## Структура тестов
@@ -36,12 +36,13 @@ public class AuthorizationAdminTest extends Simulation {
     //Загрузка Properties
     Map<String, Object> property = PropertyHelper.readProperties(
             "common/common_properties.json",
-            "tests/users/authorization/authorization_admin_profile.json"
+            "common/redis_properties.json",
+            "tests/users/authorization/authorization_admin_property.json"
     );
     
     // Нагрузочный профиль
     HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getProfile(
-            "tests/users/registration/registration_profile.json"
+            "tests/users/authorization/authorization_admin_profile.json"
     );
 
     // Настройки протокола
@@ -71,12 +72,12 @@ public class AuthorizationAdminTest extends Simulation {
 ```java
 Map<String, Object> property = PropertyHelper.readProperties(
         "common/common_properties.json", // Common Property
-        "common/redis_properties.json", // Common Property Redis Param
-        "tests/users/authorization/authorization_user_profile.json" // Test Property
+        "common/redis_properties.json", // Common Property Redis
+        "tests/users/authorization/authorization_user_property.json" // Test Property
 );
 
 HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getProfile(
-        "tests/users/registration/registration_profile.json"
+        "tests/users/registration/authorization_user_profile.json"
 ); // Нагрузочный профиль
 ```
 
@@ -122,7 +123,7 @@ mvn clean package
 Запуск теста через jar:
 
 ```bash
-java -cp target/performance-test-gatling.jar io.gatling.app.Gatling -s gatling.users.authorization.AuthorizationAdminTest
+java -Xms1g -Xmx2g -Dakka.actor.default-dispatcher.fork-join-executor.parallelism-max=10 -cp target/performance-test-gatling.jar io.gatling.app.Gatling -s gatling.users.authorization.AuthorizationAdminTest
 ```
 
 ## Запуск тестов через Jenkins
@@ -138,6 +139,8 @@ java -cp target/performance-test-gatling.jar io.gatling.app.Gatling -s gatling.u
   "TESTS_PARAM": [
     {
       "JOB": {
+        "JVM_ARGS": "-Xms1g -Xmx2g",
+        "PARALLELISM_MAX": 10,
         "GENERATOR": "load_generator",
         "TEST_NAME": "AuthorizationAdminTest",
         "TEST_PATH": "gatling.users.authorization"
@@ -172,7 +175,6 @@ java -cp target/performance-test-gatling.jar io.gatling.app.Gatling -s gatling.u
       "PERCENT_PROFILE": 100.0
     },
     "PROPERTIES": {
-      "WAIT": 10,
       "DEBUG_ENABLE": "true",
       "REDIS_KEY_READ": "users_credentials"
     }
@@ -181,9 +183,12 @@ java -cp target/performance-test-gatling.jar io.gatling.app.Gatling -s gatling.u
 ```
 
 Описание параметров:
+"JVM_ARGS": "-Xms1g -Xmx2g",
 
 * **TESTS_PARAM** - Параметры тестов;
   * **JOB** - Параметры для Java машины;
+    * **JVM_ARGS** - Ограничение по ОЗУ;
+    * **PARALLELISM_MAX** - Ограничение максимального количества потоков;
     * **GENERATOR** - Где будет запускаться тесты;
     * **TEST_NAME** - Наименования тестового класса;
     * **TEST_FOLDER** - Путь до класса в проекте;
@@ -315,7 +320,7 @@ python3 ./scripts/main.py ./scripts/resources/profiles/users/users_profile.json
 docker-compose up -d
 ```
 
-С шаблоном отправки метрик в InfluxDB можно ознакомится в файле конфигурации **influxdb/influxdb.conf**.
+С шаблоном отправки метрик в InfluxDB можно ознакомится в файле конфигурации **./monitoring/influxdb/influxdb.conf**.
 
 Пример шаблона:
 
@@ -335,4 +340,3 @@ docker-compose up -d
 2. В python скрипте выводить время теста (как в jenkins job);
 3. Записывать логи запуска python скрипта в файл;
 4. Попробовать Redis (не через rust-redis-client);
-5. Добавить троттлинг в тесты.

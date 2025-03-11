@@ -1,5 +1,3 @@
 {
-  "PROPERTIES": {
-    "LOG_PATH": "log/users"
-  }
+  "LOG_PATH": "log/users"
 }
