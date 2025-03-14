@@ -19,7 +19,7 @@ public class RegistrationTest extends Simulation {
                 "common/redis_properties.json"
         );
 
-        HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getProfile(
+        HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getOpenProfile(
                 "tests/users/registration/registration_profile.json"
         );
 

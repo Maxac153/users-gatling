@@ -199,7 +199,7 @@ java -Xms1g -Xmx2g -Dakka.actor.default-dispatcher.fork-join-executor.parallelis
   * **PROPERTIES** - Дополнительные параметры для теста.
 
 
-* **COMMON_SETTINGS** - Параметры для все тестов;
+* **COMMON_SETTINGS** - Параметры для всех тестов;
   * **MAVEN** - Параметры для bash скрипта;
     * **MODULE_NAME** - Название модуля (используется для сбора логов);
     * **PERCENT_PROFILE** - Процент от профиля;
@@ -317,7 +317,7 @@ python3 ./scripts/main.py ./scripts/resources/profiles/users/users_profile.json
 Перед первым запуском теста нужно развернуть influxDB и создать базу **gatlingdb**.
 
 ```bash
-docker-compose up -d
+sudo docker compose up
 ```
 
 С шаблоном отправки метрик в InfluxDB можно ознакомится в файле конфигурации **./monitoring/influxdb/influxdb.conf**.

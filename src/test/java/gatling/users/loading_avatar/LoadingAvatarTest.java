@@ -18,7 +18,7 @@ public class LoadingAvatarTest extends Simulation {
                 "common/common_propeLrties.json"
         );
 
-        HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getProfile(
+        HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getOpenProfile(
                 "tests/users/loading_avatar/loading_avatar_profile.json"
         );
 

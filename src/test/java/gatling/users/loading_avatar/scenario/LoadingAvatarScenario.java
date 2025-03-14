@@ -7,8 +7,6 @@ import io.gatling.javaapi.core.ScenarioBuilder;
 
 import java.util.Map;
 
-import static io.gatling.javaapi.core.CoreDsl.exec;
-
 public class LoadingAvatarScenario {
     public static ScenarioBuilder loadingAvatarScenario(Map<String, Object> property) {
         return CoreDsl.scenario("users_loading_avatar_scenario")

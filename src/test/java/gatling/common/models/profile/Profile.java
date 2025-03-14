@@ -9,6 +9,8 @@ import java.util.ArrayList;
 public class Profile {
     @SerializedName("SCENARIO_NAME")
     private String scenarioName;
+    @SerializedName("SCRIPT_EXECUTION_TIME")
+    private Long scriptExecutionTime;
     @SerializedName("STEPS")
     private ArrayList<Step> steps;
 }

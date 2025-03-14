@@ -2,83 +2,83 @@ version: '3.8'
 
 services:
 
-  vmagent:
-    image: victoriametrics/vmagent:v1.101.0
-    container_name: vmagent
-    restart: unless-stopped
-    depends_on:
-      - victoriametrics
-    ports:
-      - 8429:8429
-      - 2003:2003
-      - 2003:2003/udp
-    volumes:
-      - vmagentdata:/vmagentdata
-      - ./monitoring/vmagent:/etc/vmagent
-    command:
-      - "-remoteWrite.relabelConfig=/etc/vmagent/vmagent.yml"
-      - "--remoteWrite.url=http://victoriametrics:8428/api/v1/write"
-      - "-graphiteListenAddr=:2003"
-    networks:
-      - compose_net
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8429/health" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 15s
-
-  telegraf:
-    image: telegraf:1.31.0-alpine
-    container_name: telegraf
-    volumes:
-      - ./monitoring/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
-    depends_on:
-      - victoriametrics
-    ports:
-      - 2004:2004
-    networks:
-      - compose_net
-
-  victoriametrics:
-    image: victoriametrics/victoria-metrics:v1.101.0
-    container_name: victoriametrics
-    restart: unless-stopped
-    ports:
-      - 8428:8428
-      - 4242:4242
-    volumes:
-      - vmdata:/storage
-    command:
-      - "--storageDataPath=/storage"
-      - "--httpListenAddr=:8428"
-    networks:
-      - compose_net
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8428/health" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 15s
-
-#  influxdb:
-#    container_name: influxdb
-#    build: influxdb
+#  vmagent:
+#    image: victoriametrics/vmagent:v1.101.0
+#    container_name: vmagent
+#    restart: unless-stopped
+#    depends_on:
+#      - victoriametrics
 #    ports:
-#      - 8086:8086
+#      - 8429:8429
 #      - 2003:2003
+#      - 2003:2003/udp
+#    volumes:
+#      - vmagentdata:/vmagentdata
+#      - ./monitoring/vmagent:/etc/vmagent
+#    command:
+#      - "-remoteWrite.relabelConfig=/etc/vmagent/vmagent.yml"
+#      - "--remoteWrite.url=http://victoriametrics:8428/api/v1/write"
+#      - "-graphiteListenAddr=:2003"
 #    networks:
 #      - compose_net
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:8429/health" ]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
+#      start_period: 15s
+
+#  telegraf:
+#    image: telegraf:1.31.0-alpine
+#    container_name: telegraf
+#    volumes:
+#      - ./monitoring/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+#    depends_on:
+#      - victoriametrics
+#    ports:
+#      - 2004:2004
+#    networks:
+#      - compose_net
+
+#  victoriametrics:
+#    image: victoriametrics/victoria-metrics:v1.101.0
+#    container_name: victoriametrics
+#    restart: unless-stopped
+#    ports:
+#      - 8428:8428
+#      - 4242:4242
+#    volumes:
+#      - vmdata:/storage
+#    command:
+#      - "--storageDataPath=/storage"
+#      - "--httpListenAddr=:8428"
+#    networks:
+#      - compose_net
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:8428/health" ]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
+#      start_period: 15s
+
+  influxdb:
+    container_name: influxdb
+    build: influxdb
+    ports:
+      - 8086:8086
+      - 2003:2003
+    networks:
+      - compose_net
 
   grafana:
     image: grafana/grafana:11.0.0
     container_name: grafana
     restart: unless-stopped
     depends_on:
-      - victoriametrics
-      - vmagent
-      - telegraf
-#      - influxdb
+#      - victoriametrics
+#      - vmagent
+#      - telegraf
+      - influxdb
     environment:
       GF_USERS_ALLOW_SIGN_UP: "false"
       GF_AUTH_DISABLE_LOGIN_FORM: "true"

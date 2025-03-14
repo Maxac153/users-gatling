@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import gatling.common.models.profile.Profile;
 import gatling.common.models.profile.Step;
+import io.gatling.javaapi.core.ClosedInjectionStep;
 import io.gatling.javaapi.core.OpenInjectionStep;
 
 import java.io.BufferedReader;
@@ -15,8 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.gatling.javaapi.core.CoreDsl.constantUsersPerSec;
-import static io.gatling.javaapi.core.CoreDsl.rampUsersPerSec;
+import static io.gatling.javaapi.core.CoreDsl.*;
 
 public class PropertyHelper {
     private static final Gson gson = new Gson();
@@ -59,7 +59,7 @@ public class PropertyHelper {
         return properties;
     }
 
-    public static HashMap<String, OpenInjectionStep[]> getProfile(String profilePath) {
+    public static HashMap<String, OpenInjectionStep[]> getOpenProfile(String profilePath) {
         String systemProfile = System.getProperty("TEST_PROFILE");
 
         Type listType = new TypeToken<ArrayList<Profile>>(){}.getType();
@@ -79,6 +79,51 @@ public class PropertyHelper {
                 loadProfile.add(constantUsersPerSec(step.getEndTps()).during((long) (step.getHoldTime() * 60)));
             }
             profileMap.put(profile.getScenarioName(), loadProfile.toArray(new OpenInjectionStep[0]));
+        }
+
+        return profileMap;
+    }
+
+    private static int calculateUsers(double rps, double throughput) {
+        double pacing = (1 / throughput) * 60;
+        double requiredIntensityPerMinute = rps * 60;
+        return (int) Math.ceil(requiredIntensityPerMinute / (60 / pacing));
+    }
+
+    private static double calculateThroughputPerMinute(double rps, long scriptExecutionTime) {
+        double requiredIntensityPerMinute = rps * 60;
+        int threads = (int) Math.ceil(requiredIntensityPerMinute / ((double) 60 / scriptExecutionTime));
+        double executionTime = threads / rps;
+        double scale = Math.pow(10, 3);
+        return Math.ceil(60 / executionTime * scale) / scale;
+    }
+
+    public static HashMap<String, ClosedInjectionStep[]> getClosedProfile(String profilePath, Map<String, Object> property) {
+        String systemProfile = System.getProperty("TEST_PROFILE");
+
+        Type listType = new TypeToken<ArrayList<Profile>>(){}.getType();
+        ArrayList<Profile> profiles = gson.fromJson(
+                (systemProfile == null) ? readProperty(profilePath) : systemProfile.replace("\"", ""),
+                listType
+        );
+
+        HashMap<String, ClosedInjectionStep[]> profileMap = new HashMap<>();
+        for (Profile profile : profiles) {
+            ArrayList<ClosedInjectionStep> loadProfile = new ArrayList<>();
+            double throughputPerMinute = calculateThroughputPerMinute(profile.getSteps().get(0).getEndTps(), profile.getScriptExecutionTime());
+            property.put("SCRIPT_EXECUTION_TIME", profile.getScriptExecutionTime());
+
+            for (Step step : profile.getSteps()) {
+                int rampUpUsers = calculateUsers(step.getStartTps(), throughputPerMinute);
+                int holdUsers = calculateUsers(step.getEndTps(), throughputPerMinute);
+
+                // RAMP_UP
+                loadProfile.add(rampConcurrentUsers(rampUpUsers).to(holdUsers).during((long) (step.getRampTime() * 60)));
+
+                // HOLD
+                loadProfile.add(constantConcurrentUsers(holdUsers).during((long) (step.getHoldTime() * 60)));
+            }
+            profileMap.put(profile.getScenarioName(), loadProfile.toArray(new ClosedInjectionStep[0]));
         }
 
         return profileMap;

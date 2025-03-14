@@ -1,6 +1,7 @@
 [
     {
       "SCENARIO_NAME": "AUTHORIZATION_ADMIN_SCENARIO",
+      "SCRIPT_EXECUTION_TIME": 30,
       "STEPS": [
         {
           "STAR_TPS": 0.0,

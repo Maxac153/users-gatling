@@ -19,7 +19,7 @@ public class AuthorizationUserTest extends Simulation {
                 "common/redis_properties.json"
         );
 
-        HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getProfile(
+        HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getOpenProfile(
                 "tests/users/authorization/authorization_user_profile.json"
         );
 
