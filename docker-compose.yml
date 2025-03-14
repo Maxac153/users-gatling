@@ -63,7 +63,7 @@ services:
 
   influxdb:
     container_name: influxdb
-    build: influxdb
+    build: ./monitoring/influxdb
     ports:
       - 8086:8086
       - 2003:2003
