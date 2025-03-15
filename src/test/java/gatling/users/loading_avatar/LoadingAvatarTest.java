@@ -15,7 +15,7 @@ import static io.gatling.javaapi.core.OpenInjectionStep.atOnceUsers;
 public class LoadingAvatarTest extends Simulation {
     public LoadingAvatarTest() {
         Map<String, Object> property = PropertyHelper.readProperties(
-                "common/common_propeLrties.json"
+                "common/common_properties.json"
         );
 
         HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getOpenProfile(

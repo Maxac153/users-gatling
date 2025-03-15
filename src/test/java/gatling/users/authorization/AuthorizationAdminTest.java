@@ -29,7 +29,6 @@ public class AuthorizationAdminTest extends Simulation {
                 .disableCaching()
                 .userAgentHeader("Gatling/Performance Test");
 
-
         if (Boolean.parseBoolean(property.get("DEBUG_ENABLE").toString()))
             this.setUp(
                     AuthorizationScenario.authorizationAdminScenario(property)

@@ -72,11 +72,16 @@ public class PropertyHelper {
         HashMap<String, OpenInjectionStep[]> profileMap = new HashMap<>();
         for (Profile profile : profiles) {
             ArrayList<OpenInjectionStep> loadProfile = new ArrayList<>();
-            for (Step step : profile.getSteps()) {
+            ArrayList<Step> steps = profile.getSteps();
+
+            for (int i = 0; i < steps.size(); i++) {
+                Step step = steps.get(i);
+                double startTps = (i == 0) ? 0.0 : steps.get(i - 1).getTps();
+
                 // RAMP_UP
-                loadProfile.add(rampUsersPerSec(step.getStartTps()).to(step.getEndTps()).during((long) (step.getRampTime() * 60)));
+                loadProfile.add(rampUsersPerSec(startTps).to(step.getTps()).during((long) (step.getRampTime() * 60)));
                 // HOLD
-                loadProfile.add(constantUsersPerSec(step.getEndTps()).during((long) (step.getHoldTime() * 60)));
+                loadProfile.add(constantUsersPerSec(step.getTps()).during((long) (step.getHoldTime() * 60)));
             }
             profileMap.put(profile.getScenarioName(), loadProfile.toArray(new OpenInjectionStep[0]));
         }
@@ -110,12 +115,16 @@ public class PropertyHelper {
         HashMap<String, ClosedInjectionStep[]> profileMap = new HashMap<>();
         for (Profile profile : profiles) {
             ArrayList<ClosedInjectionStep> loadProfile = new ArrayList<>();
-            double throughputPerMinute = calculateThroughputPerMinute(profile.getSteps().get(0).getEndTps(), profile.getScriptExecutionTime());
+            double throughputPerMinute = calculateThroughputPerMinute(profile.getSteps().get(0).getTps(), profile.getScriptExecutionTime());
             property.put("SCRIPT_EXECUTION_TIME", profile.getScriptExecutionTime());
 
-            for (Step step : profile.getSteps()) {
-                int rampUpUsers = calculateUsers(step.getStartTps(), throughputPerMinute);
-                int holdUsers = calculateUsers(step.getEndTps(), throughputPerMinute);
+            ArrayList<Step> steps = profile.getSteps();
+            for (int i = 0; i < steps.size(); i++) {
+                Step step = steps.get(i);
+                double startTps = (i == 0) ? 0.0 : steps.get(i - 1).getTps();
+
+                int rampUpUsers = calculateUsers(startTps, throughputPerMinute);
+                int holdUsers = calculateUsers(step.getTps(), throughputPerMinute);
 
                 // RAMP_UP
                 loadProfile.add(rampConcurrentUsers(rampUpUsers).to(holdUsers).during((long) (step.getRampTime() * 60)));

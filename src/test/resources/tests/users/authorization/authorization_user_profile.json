@@ -3,8 +3,7 @@
       "SCENARIO_NAME": "AUTHORIZATION_USER_SCENARIO",
       "STEPS": [
         {
-          "STAR_TPS": 0.0,
-          "END_TPS": 1.0,
+          "TPS": 1.0,
           "RAMP_TIME": 1.0,
           "HOLD_TIME": 2.0
         }

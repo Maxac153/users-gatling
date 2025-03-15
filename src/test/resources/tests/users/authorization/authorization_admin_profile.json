@@ -4,16 +4,14 @@
       "SCRIPT_EXECUTION_TIME": 30,
       "STEPS": [
         {
-          "STAR_TPS": 0.0,
-          "END_TPS": 1.0,
+          "TPS": 0.5,
           "RAMP_TIME": 1.0,
-          "HOLD_TIME": 1.0
+          "HOLD_TIME": 5.0
         },
         {
-          "STAR_TPS": 1.0,
-          "END_TPS": 2.0,
+          "TPS": 1.5,
           "RAMP_TIME": 1.0,
-          "HOLD_TIME": 10.0
+          "HOLD_TIME": 30.0
         }
       ]
     }

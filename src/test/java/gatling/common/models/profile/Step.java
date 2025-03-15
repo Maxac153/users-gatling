@@ -5,10 +5,8 @@ import lombok.Data;
 
 @Data
 public class Step {
-    @SerializedName("STAR_TPS")
-    private Double startTps;
-    @SerializedName("END_TPS")
-    private Double endTps;
+    @SerializedName("TPS")
+    private Double tps;
     @SerializedName("RAMP_TIME")
     private Double rampTime;
     @SerializedName("HOLD_TIME")
