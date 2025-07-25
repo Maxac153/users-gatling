@@ -2,6 +2,10 @@
 
 ![gatling_logo.png](img/gatling_logo.png)
 
+```bash
+mvn -DGRAPHITE_HOST=localhost -DGRAPHITE_PORT=2003 -DLOAD_GENERATOR=localhost gatling:test -Dgatling.simulationClass=gatling.TestRunner
+```
+
 Пример тестового фреймворка для быстрого старта на ([Gatling](https://docs.gatling.io/)).
 
 ## Структура каталогов
@@ -117,13 +121,18 @@ mvn gatling:test -Dgatling.simulationClass=gatling.users.authorization.Authoriza
 Команда для сборки jar архива перед запуском теста:
 
 ```bash
-mvn clean package
+mvn clean package -DskipTests
 ```
 
 Запуск теста через jar:
 
 ```bash
 java -Xms1g -Xmx2g -Dakka.actor.default-dispatcher.fork-join-executor.parallelism-max=10 -cp target/performance-test-gatling.jar io.gatling.app.Gatling -s gatling.users.authorization.AuthorizationAdminTest
+```
+
+```bash
+USE gatlingdb
+DROP MEASUREMENT gatling
 ```
 
 ## Запуск тестов через Jenkins

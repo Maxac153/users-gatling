@@ -1,0 +1,36 @@
+{
+  "TESTS_PARAM": [
+    {
+      "RUN": {
+        "ENV_PATHS": "redis",
+        "TEST_NAME": "authorization",
+        "SIMULATION_CLASS": "gatling.users.authorization.AuthorizationAdminTest"
+      },
+      "PROFILE": [
+        {
+          "SCENARIO_NAME": "AUTHORIZATION_ADMIN_SCENARIO",
+          "PACING": 10,
+          "STEPS": [
+            {
+              "TPS": 1,
+              "RAMP_TIME": 1,
+              "HOLD_TIME": 5
+            }
+          ]
+        }
+      ],
+      "PROPERTIES": {}
+    }
+  ],
+  "COMMON_SETTINGS": {
+    "BUILD_SETTINGS": {
+      "MODULE_NAME": "2200",
+      "LEVEL_CONSOLE_LOG": "INFO",
+      "LEVEL_FILE_LOG": "INFO",
+      "PERCENT_PROFILE": 100
+    },
+    "PROPERTIES": {
+      "DEBUG_ENABLE": "false"
+    }
+  }
+}

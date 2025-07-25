@@ -68,10 +68,10 @@ def generate_command(test_config: TestConfig) -> str:
 
         command = (
             f'mvn gatling:test '
+            f'-DCOMMON_SETTINGS={test_common_settings} '
+            f'-DTEST_PROFILE={tests_profile} '
+            f'-DTEST_SETTINGS={test_settings} '
             f'-Dgatling.simulationClass={test_param.JOB.SIMULATION_CLASS} '
-            f'-DCOMMON_SETTINGS="{test_common_settings}" '
-            f'-DTEST_PROFILE="{tests_profile}" '
-            f'-DTEST_SETTINGS="{test_settings}" & '
         )
         commands.append(command)
 

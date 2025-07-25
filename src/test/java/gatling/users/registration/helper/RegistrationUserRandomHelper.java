@@ -1,7 +1,7 @@
 package gatling.users.registration.helper;
 
 import com.google.gson.Gson;
-import gatling.common.models.login.Registration;
+import gatling.__common.models.login.Registration;
 import net.datafaker.Faker;
 
 public class RegistrationUserRandomHelper {

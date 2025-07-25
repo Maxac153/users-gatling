@@ -1,13 +1,40 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <!-- Консольный аппендер -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%-5level] %logger{15} - %msg%n%rEx</pattern>
+            <charset>UTF-8</charset>
+            <pattern>%highlight(%d{HH:mm:ss.SSS} [%-5level] %logger{15} - %msg%n%ex{full})</pattern>
         </encoder>
         <immediateFlush>false</immediateFlush>
     </appender>
-    <logger name="io.gatling.http.engine.response" level="INFO" />
-    <root level="WARN">
-        <appender-ref ref="CONSOLE" />
+
+    <!-- Файловый аппендер с ограничением размера и количества файлов -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/app.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>logs/app_%i.log.zip</fileNamePattern>
+            <minIndex>2</minIndex>
+            <maxIndex>3</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>1MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%highlight(%d{HH:mm:ss.SSS} [%-5level] %logger{15} - %msg%n%ex{full})</pattern>
+        </encoder>
+    </appender>
+
+    <root level="${LEVEL_CONSOLE_LOG:-INFO}">
+        <appender-ref ref="CONSOLE"/>
     </root>
+
+    <logger level="${LEVEL_FILE_LOG:-WARN}" name="io.gatling">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <logger level="${LEVEL_FILE_LOG:-INFO}" name="gatling">
+        <appender-ref ref="FILE"/>
+    </logger>
 </configuration>
