@@ -1,9 +1,8 @@
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import helpers.ReadFileHelper;
+import lombok.extern.slf4j.Slf4j;
 import models.profile.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,8 +10,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class StepGenerator {
-    private static final Logger log = LoggerFactory.getLogger(StepGenerator.class);
     private static final Gson gson = new Gson();
 
     public static void main(String[] args) {

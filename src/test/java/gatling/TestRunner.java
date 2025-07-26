@@ -53,7 +53,7 @@ public class TestRunner extends Simulation {
                 .flatMap(testParam -> testParam.getProfiles().stream())
                 .max(Comparator.comparingDouble(profile ->
                         profile.getSteps().stream()
-                                .mapToDouble(step -> step.getHoldTime() * step.getRampTime())
+                                .mapToDouble(step -> step.getHoldTime() + step.getRampTime())
                                 .sum()
                 ))
                 .orElse(null);
@@ -63,14 +63,14 @@ public class TestRunner extends Simulation {
                 Class<?> classSimulation = Class.forName(testParam.getRun().getSimulationClass());
                 Method method = classSimulation.getMethod("run", Map.class, ArrayList.class);
                 Object instance = classSimulation.getDeclaredConstructor().newInstance();
-                commonSettings.put("ENV_PATHS", testParam.getRun().getEnv());
+                commonSettings.put("ENV", testParam.getRun().getEnv());
 
                 if (!debugEnable) {
                     for (Profile profile : testParam.getProfiles()) {
                         logProfileInfo(profile);
                     }
                 }
-                // переделать common settings перекрывают test settings
+
                 commonSettings.putAll(testParam.getProperties());
                 populationBuilders.add((PopulationBuilder) method.invoke(instance, commonSettings, testParam.getProfiles()));
             } catch (Exception e) {

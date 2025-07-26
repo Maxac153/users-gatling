@@ -7,8 +7,6 @@ import io.gatling.javaapi.core.OpenInjectionStep;
 import io.gatling.javaapi.core.Session;
 import models.profile.Profile;
 import models.profile.Step;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Type;
 import java.time.Duration;
@@ -19,7 +17,6 @@ import static io.gatling.javaapi.core.CoreDsl.*;
 
 public class PropertyHelper {
     private static final Gson gson = new Gson();
-    private static final Logger log = LoggerFactory.getLogger(PropertyHelper.class);
 
     public static Map<String, Object> readProperties(
             Map<String, Object> testSettings,
@@ -39,11 +36,8 @@ public class PropertyHelper {
             properties.putAll(testSettings);
         }
 
-        // TODO Доделать
         // Параметры из .env (redis_login, redis_password, db_login, db_password, ...)
-//        properties.putAll(ReadFileHelper.readEnv(
-//                properties.get("ENV").toString()
-//        ));
+        properties.putAll(ReadFileHelper.readEnv(properties.get("ENV").toString()));
 
         return properties;
     }

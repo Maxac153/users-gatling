@@ -40,3 +40,4 @@ build/
 /results/
 /logs/
 /env/
+/pregen_profile.json

@@ -1,7 +1,0 @@
-{
-  "PROPERTIES": {
-    "DB_HOST": "localhost",
-    "DB_LOGIN": "admin",
-    "DB_PASSWORD": "admin"
-  }
-}

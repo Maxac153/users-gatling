@@ -68,11 +68,13 @@ public class ReadFileHelper {
 
     public static HashMap<String, Object> readEnv(String env) {
         HashMap<String, Object> envMap = new HashMap<>();
-        String[] envPaths = env.split(",");
+        if (!env.isEmpty()) {
+            String[] envPaths = env.split(",");
 
-        for (String envPath : envPaths) {
-            if (!envPath.isEmpty()) {
-                envMap.putAll(gson.fromJson(ReadFileHelper.readProfile("./env/" + envPath + ".json"), type));
+            for (String envPath : envPaths) {
+                if (!envPath.isEmpty()) {
+                    envMap.putAll(gson.fromJson(ReadFileHelper.readProfile("./env/" + envPath + ".json"), type));
+                }
             }
         }
 

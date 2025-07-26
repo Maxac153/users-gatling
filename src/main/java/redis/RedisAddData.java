@@ -1,8 +1,7 @@
 package redis;
 
 import helpers.ReadFileHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
@@ -12,9 +11,8 @@ import java.util.HashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
 public class RedisAddData {
-    private static final Logger log = LoggerFactory.getLogger(RedisAddData.class);
-
     public static void main(String[] args) {
         String key = System.getProperty("KEY");
         String jsonDataPath = System.getProperty("JSON_DATA_PATH");

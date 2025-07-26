@@ -8,12 +8,24 @@ public class RedisHelper {
     private static RedisHelper instance;
     private final Jedis jedis;
 
+    private RedisHelper(String redisHost, Integer redisPort) {
+        jedis = new Jedis(redisHost, redisPort);
+    }
+
     private RedisHelper(String redisHost, Integer redisPort, String username, String password) {
         jedis = new Jedis(redisHost, redisPort);
         jedis.auth(username, password);
     }
 
     public static synchronized RedisHelper getInstance() {
+        return instance;
+    }
+
+    public static synchronized RedisHelper getInstance(String redisHost, Integer redisPort) {
+        if (instance == null) {
+            instance = new RedisHelper(redisHost, redisPort);
+        }
+
         return instance;
     }
 
@@ -32,13 +44,13 @@ public class RedisHelper {
         }
     }
 
-    public synchronized String read(String key, RedisReadMode readMode, Boolean keep) {
+    public synchronized void read(String key, RedisReadMode readMode, Boolean keep) {
         String result;
 
         if (readMode == RedisReadMode.FIRST) {
             result = jedis.lpop(key);
             if (result == null) {
-                return "{}";
+                return;
             }
             if (keep) {
                 jedis.rpush(key, result);
@@ -46,16 +58,14 @@ public class RedisHelper {
         } else if (readMode == RedisReadMode.LAST) {
             result = jedis.rpop(key);
             if (result == null) {
-                return "{}";
+                return;
             }
             if (keep) {
                 jedis.lpush(key, result);
             }
         } else {
-            return "{}";
         }
 
-        return result;
     }
 
     public synchronized boolean exists(String key) {

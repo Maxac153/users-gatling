@@ -2,10 +2,6 @@
 
 ![gatling_logo.png](img/gatling_logo.png)
 
-```bash
-mvn -DGRAPHITE_HOST=localhost -DGRAPHITE_PORT=2003 -DLOAD_GENERATOR=localhost gatling:test -Dgatling.simulationClass=gatling.TestRunner
-```
-
 Пример тестового фреймворка для быстрого старта на ([Gatling](https://docs.gatling.io/)).
 
 ## Структура каталогов
@@ -113,7 +109,7 @@ HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getProfile(
 Команда для запуска теста через maven:
 
 ```bash
-mvn gatling:test -Dgatling.simulationClass=gatling.users.authorization.AuthorizationAdminTest
+mvn -DGRAPHITE_HOST=localhost -DGRAPHITE_PORT=2003 -DLOAD_GENERATOR=localhost gatling:test -Dgatling.simulationClass=gatling.TestRunner
 ```
 
 ### Запуск через jar

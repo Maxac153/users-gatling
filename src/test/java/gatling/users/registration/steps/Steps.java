@@ -1,6 +1,5 @@
 package gatling.users.registration.steps;
 
-
 import io.gatling.javaapi.core.ChainBuilder;
 import io.gatling.javaapi.core.CoreDsl;
 import io.gatling.javaapi.http.HttpDsl;

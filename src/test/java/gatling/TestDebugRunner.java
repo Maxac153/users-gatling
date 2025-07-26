@@ -4,8 +4,7 @@ import com.google.gson.Gson;
 import gatling.__common.helpers.RedisHelper;
 import helpers.DataFormatHelper;
 import helpers.ReadFileHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import redis.RedisDeleteKeys;
 
 import java.io.BufferedReader;
@@ -21,9 +20,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
 public class TestDebugRunner {
     private static final Gson gson = new Gson();
-    private static final Logger log = LoggerFactory.getLogger(TestDebugRunner.class);
     private static final HashMap<String, Object> redisProperty = ReadFileHelper.readEnv("redis");
     private static final AtomicInteger index = new AtomicInteger(0);
     private static final AtomicBoolean flagError = new AtomicBoolean(false);

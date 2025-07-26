@@ -1,16 +1,14 @@
 package redis;
 
 import helpers.ReadFileHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class RedisDeleteKeys {
-    private static final Logger log = LoggerFactory.getLogger(RedisDeleteKeys.class);
-
     public static void main(String[] args) {
         if (args.length > 0) {
             HashMap<String, Object> properties = new HashMap<>(ReadFileHelper.readEnv("redis"));

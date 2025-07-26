@@ -1,17 +1,16 @@
 package helpers;
 
+import lombok.extern.slf4j.Slf4j;
 import models.profile.Profile;
 import models.profile.Step;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+@Slf4j
 public class LoggerHelper {
-    private static final Logger log = LoggerFactory.getLogger(LoggerHelper.class);
     private static final String lineSeparator = "+---------------------------------------------------------------------------------------------------------+";
 
     public static void logProfileDurationMaxInfo(Profile profileDurationMax) {
