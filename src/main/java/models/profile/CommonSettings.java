@@ -7,8 +7,8 @@ import java.util.HashMap;
 
 @Data
 public class CommonSettings {
-    @SerializedName("BUILD_SETTINGS")
-    private BuildSettings buildSettings;
+    @SerializedName("RUN_SETTINGS")
+    private RunSettings runSettings;
     @SerializedName("PROPERTIES")
     private HashMap<String, Object> properties;
 }

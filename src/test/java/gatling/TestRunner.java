@@ -20,7 +20,7 @@ public class TestRunner extends Simulation {
     }
 
     private List<PopulationBuilder> testRunner() throws RuntimeException {
-        String profilePath = System.getProperty("PATH_PROFILE", "./profiles/test_profile.json");
+        String profilePath = System.getProperty("PROFILE", "./profiles/test_profile.json");
         String testsParamString = ReadFileHelper.readProfile(profilePath);
 
         TestsParam testsParam = new TestsParam();
@@ -38,7 +38,7 @@ public class TestRunner extends Simulation {
             testsParam = new Gson().fromJson(testsParamString, TestsParam.class);
         }
 
-        Double percentProfile = testsParam.getCommonSettings().getBuildSettings().getPercentProfile();
+        Double percentProfile = testsParam.getCommonSettings().getRunSettings().getPercentProfile();
 
         testsParam.getTestParam().stream()
                 .filter(testParam -> testParam.getProfiles() != null)

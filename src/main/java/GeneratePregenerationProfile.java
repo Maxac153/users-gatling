@@ -35,7 +35,7 @@ public class GeneratePregenerationProfile {
             testsParam = new Gson().fromJson(rawProfile, TestsParam.class);
         }
 
-        double percentProfile = testsParam.getCommonSettings().getBuildSettings().getPercentProfile();
+        double percentProfile = testsParam.getCommonSettings().getRunSettings().getPercentProfile();
         List<TestParam> testParams = testsParam.getTestParam();
 
         // 1. Map REDIS_KEY_READ -> REDIS_KEY_ADD (non-null, different)
@@ -154,7 +154,7 @@ public class GeneratePregenerationProfile {
         }
 
         testsParam.setTestParam(pregenProfile);
-        testsParam.getCommonSettings().getBuildSettings().setPercentProfile(100.0);
+        testsParam.getCommonSettings().getRunSettings().setPercentProfile(100.0);
 
         // 8. Find longest scenario duration
         Profile maxDurationProfile = testsParam.getTestParam().stream()

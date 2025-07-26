@@ -40,7 +40,7 @@ public class StepGenerator {
             testsParam = gson.fromJson(testsParamString, TestsParam.class);
         }
 
-        Double percentProfile = testsParam.getCommonSettings().getBuildSettings().getPercentProfile();
+        Double percentProfile = testsParam.getCommonSettings().getRunSettings().getPercentProfile();
         List<TestParam> testParams = testsParam.getTestParam();
 
         for (TestParam testParam : testParams) {
@@ -70,7 +70,7 @@ public class StepGenerator {
             }
         }
 
-        testsParam.getCommonSettings().getBuildSettings().setPercentProfile(100.0);
+        testsParam.getCommonSettings().getRunSettings().setPercentProfile(100.0);
         try (FileWriter writer = new FileWriter("./" + modifiedProfileName + ".json", StandardCharsets.UTF_8)) {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(testsParam));
             log.info("File Saved Successfully (./{}.json", modifiedProfileName);

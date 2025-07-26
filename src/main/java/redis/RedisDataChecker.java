@@ -38,7 +38,7 @@ public class RedisDataChecker {
             testsParam = new Gson().fromJson(testsParamString, TestsParam.class);
         }
 
-        Double percentProfile = testsParam.getCommonSettings().getBuildSettings().getPercentProfile();
+        Double percentProfile = testsParam.getCommonSettings().getRunSettings().getPercentProfile();
         List<TestParam> testParams = testsParam.getTestParam();
 
         Map<String, Long> testData = testParams.stream()
