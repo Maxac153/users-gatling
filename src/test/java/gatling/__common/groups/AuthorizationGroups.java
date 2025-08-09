@@ -22,12 +22,14 @@ public class AuthorizationGroups {
     public static ChainBuilder authorizationAdmin = group("uc_users_authentication_admin_#{REDIS_KEY_ADD}").on(
             exec(session -> session.set("login", "manager@mail.ru").set("password", "1"))
                     .exec(session -> {
-                        RedisHelper.getInstance("localhost", 6379)
-                                .read(
-                                        session.getString("REDIS_KEY_READ"),
-                                        RedisReadMode.FIRST,
-                                        false
-                                );
+                        if (!session.getString("REDIS_KEY_READ").equals("mdm")) {
+                            RedisHelper.getInstance("localhost", 6379)
+                                    .read(
+                                            session.getString("REDIS_KEY_READ"),
+                                            RedisReadMode.FIRST,
+                                            false
+                                    );
+                        }
 
                         return session;
                     })
@@ -42,6 +44,5 @@ public class AuthorizationGroups {
 
                         return session;
                     })
-            // .exec(HttpDsl.http("ur_users_open_main_page_2").get("/"))
     );
 }

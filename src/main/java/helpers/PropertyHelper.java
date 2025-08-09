@@ -104,7 +104,7 @@ public class PropertyHelper {
             return (long) Math.floor(pace * Math.ceil(pacing / pace) * 3 * 1000);
         }
 
-        return (long) Math.floor(pace * 1000);
+        return (long) Math.floor(pacing * 1000);
     }
 
     public static HashMap<String, ClosedInjectionStep[]> getClosedProfile(
@@ -127,7 +127,6 @@ public class PropertyHelper {
 
                 long pacingRumpUp = getStepPace(startTps, pacing);
                 long pacingHold = getStepPace(step.getTps(), pacing);
-
                 stepsPace.put(currentTime, pacingHold);
 
                 int rampUpUsers = (int) Math.round(startTps * pacingRumpUp / 1000);

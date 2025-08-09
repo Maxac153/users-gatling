@@ -2,7 +2,7 @@
   "TESTS_PARAM": [
     {
       "RUN": {
-        "LOAD_GENERATOR": "master",
+        "LOAD_GENERATOR": "test",
         "ENV": "redis",
         "TEST_NAME": "authorization_1",
         "SIMULATION_CLASS": "gatling.users.authorization.AuthorizationAdminTest"
@@ -13,16 +13,21 @@
           "PACING": 10,
           "STEPS": [
             {
-              "TPS": 1,
-              "RAMP_TIME": 1,
-              "HOLD_TIME": 5
+              "TPS": 0.0,
+              "RAMP_TIME": 0.0,
+              "HOLD_TIME": 1.0
+            },
+            {
+              "TPS": 7.0,
+              "RAMP_TIME": 2.1346,
+              "HOLD_TIME": 9.787380952
             }
           ]
         }
       ],
       "PROPERTIES": {
-        "REDIS_KEY_READ": "mdm",
-        "REDIS_KEY_ADD": "2200_authorization_1"
+        "REDIS_KEY_READ": "2200_authorization_1",
+        "REDIS_KEY_ADD": "2200_authorization_2"
       }
     },
     {
@@ -38,34 +43,9 @@
           "PACING": 10,
           "STEPS": [
             {
-              "TPS": 1,
-              "RAMP_TIME": 1,
-              "HOLD_TIME": 5
-            }
-          ]
-        }
-      ],
-      "PROPERTIES": {
-        "REDIS_KEY_READ": "mdm",
-        "REDIS_KEY_ADD": "2200_authorization_1"
-      }
-    },
-    {
-      "RUN": {
-        "LOAD_GENERATOR": "test",
-        "ENV": "redis",
-        "TEST_NAME": "authorization_3",
-        "SIMULATION_CLASS": "gatling.users.authorization.AuthorizationAdminTest"
-      },
-      "PROFILE": [
-        {
-          "SCENARIO_NAME": "AUTHORIZATION_ADMIN_SCENARIO",
-          "PACING": 10,
-          "STEPS": [
-            {
-              "TPS": 1,
-              "RAMP_TIME": 1,
-              "HOLD_TIME": 5
+              "TPS": 7.0,
+              "RAMP_TIME": 1.9759333333,
+              "HOLD_TIME": 10.569722222
             }
           ]
         }

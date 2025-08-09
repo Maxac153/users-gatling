@@ -57,76 +57,70 @@ class TestsParam {
     CommonSettings COMMON_SETTINGS
 }
 
-// Обновление исходников
-def updateSources() {
-
-}
-
-// Создаём скрипт запуска
-def createScriptRun(loadGenerator, profile) {
-    // mvn -DGRAPHITE_HOST=localhost -DGRAPHITE_PORT=2003 -DLOAD_GENERATOR=localhost -DPROFILE=./profiles/test_profile.json gatling:test -Dgatling.simulationClass=gatling.TestRunner
-    // mvn -DGRAPHITE_HOST=localhost -DGRAPHITE_PORT=2003 -DLOAD_GENERATOR=localhost -DPROFILE=./profiles/test_profile.json gatling:test -Dgatling.simulationClass=gatling.TestRunner
-}
-
-// Скачиваем логи c генератора в Jenkins
-def downloadJenkinsLog() {
-
-}
+def groupedMap = [:]
 
 pipeline {
-    agent any
+    agent { label 'test2' }
     parameters {
-        // TODO Git Branch
         booleanParam(name: 'BUILD_JAR_ENABLE', defaultValue: false, description: 'Нужно ли пересобрать обновить исходники на генераторе')
+        text(name: 'GIT_BRANCH', defaultValue: 'master', description: 'Название ветки из которой надо подтянуть изменения')
         text(name: 'JSON', defaultValue: '', description: 'JSON с параметрами запуска')
     }
 
     environment {
         // Креды пользователя для подключения по ssh и scp
-        USERNAME = ''
-        CREDENTIAL = ''
-        GENERATOR_LOGS = 'logs'
+        LOG_FOLDER_PATH = 'logs'
+        JAR_NAME = 'performance-test-gatling.jar'
+        GIT_URL = 'https://github.com/yourorg/yourrepo.git'
     }
 
     stages {
         // Обновляем исходники Jenkins
-        stage("Update Sources") {
+        stage("1. Update Jar On Generators") {
             when {
                 expression { params.BUILD_JAR_ENABLE == true }
             }
             steps {
                 script {
-                    println 'Build Jar'
-                    // git branch: 'develop', url: 'https://github.com/yourorg/yourrepo.git'
+                    println '=========== UPDATE JAR ON GENERATORS ==========='
+
+                    println '1. Build Jar'
+                    git branch: "${params.GIT_BRANCH}", url: "${env.GIT_URL}"
+                    sh 'mvn clean package -DskipTests'
+
+                    println '2. Update Jar On Generators'
+                    // sh ''
                 }
             }
         }
 
         // Запуск тестов
-        stage("Starting Tests") {
+        stage("2. Starting Tests") {
             when {
                 expression { params.JSON != '' }
             }
             steps {
                 script {
+                    println '=========== RUN TESTS ON GENERATORS ==========='
+
                     def parsed = new JsonSlurperClassic().parseText(params.JSON)
                     def commonSettings = parsed.COMMON_SETTINGS
-                    def groupedMap = [:]
+                    def preparedTasks = [:]
+                    def parallelTasks = [:]
 
-                    // Группируем тесты по LOAD_GENERATOR
+                    println '1. Group Tests By LOAD_GENERATOR'
                     parsed.TESTS_PARAM.each { testParam ->
-                        def loadGen = testParam.RUN?.LOAD_GENERATOR
-                        if (!groupedMap.containsKey(loadGen)) {
-                            groupedMap[loadGen] = [TESTS_PARAM: [], COMMON_SETTINGS: commonSettings]
+                        def loadGenerator = testParam.RUN?.LOAD_GENERATOR
+                        if (!groupedMap.containsKey(loadGenerator)) {
+                            groupedMap[loadGenerator] = [TESTS_PARAM: [], COMMON_SETTINGS: commonSettings]
                         }
-                        groupedMap[loadGen].TESTS_PARAM << testParam
+                        groupedMap[loadGenerator].TESTS_PARAM << testParam
                     }
 
-                    // Вынесем подготовку сериализуемых данных и строк для запуска до параллели
-                    def preparedTasks = [:]
+                    println '2. Preparing The Launch Script'
                     groupedMap.each { loadGenerator, testProfile ->
                         def cleanProfile = [
-                                TESTS_PARAM: testProfile.TESTS_PARAM.collect { testParam ->
+                        TESTS_PARAM: testProfile.TESTS_PARAM.collect { testParam ->
                                     [ RUN: testParam.RUN, PROFILE: testParam.PROFILE, PROPERTIES: testParam.PROPERTIES]
                                 },
                                 COMMON_SETTINGS: testProfile.COMMON_SETTINGS
@@ -135,24 +129,32 @@ pipeline {
                         def profileJson = new JsonBuilder(cleanProfile).toString()
                         def profilePath = "test_profile_${loadGenerator}.json"
 
-                        def scriptRun = "mvn -DGRAPHITE_HOST=${testProfile.COMMON_SETTINGS.RUN_SETTINGS.DATASOURCE_HOST} " +
+                        def scriptRun = "java -DGRAPHITE_HOST=${testProfile.COMMON_SETTINGS.RUN_SETTINGS.DATASOURCE_HOST} " +
                                 "-DGRAPHITE_PORT=${testProfile.COMMON_SETTINGS.RUN_SETTINGS.DATASOURCE_PORT} " +
                                 "-DLOAD_GENERATOR=${loadGenerator} " +
-                                "-DPROFILE=${profilePath} gatling:test -Dgatling.simulationClass=gatling.TestRunner"
+                                "-DPROFILE=${profilePath} -cp performance-test-gatling.jar io.gatling.app.Gatling -s gatling.TestRunner"
 
-                        preparedTasks[loadGenerator] = [profileJson: profileJson, scriptRun: scriptRun, profilePath: profilePath]
+                        preparedTasks[loadGenerator] = [
+                                profileJson: profileJson,
+                                scriptRun: scriptRun,
+                                profilePath: profilePath
+                        ]
                     }
 
                     // Запуск параллельных задач с уже готовыми сериализуемыми данными
-                    def parallelTasks = [:]
-                    preparedTasks.each { loadGenerator, taskData ->
-                        parallelTasks["run-tests-gen-${loadGenerator}"] = {
-                            echo "Running load generator: ${loadGenerator}"
-                            echo "Command: ${taskData.scriptRun}"
-                            // Сохраняем JSON профиль в файл
-                            sh "echo '${taskData.profileJson}' > ${taskData.profilePath}"
+                    println '3. Running Tests On Generators'
+                    preparedTasks.eachWithIndex { loadGenerator, taskData, index ->
+                        node(loadGenerator) {
+                            parallelTasks["${index}-run-tests-generator-${loadGenerator}"] = {
+                                println "Running Load Generator: ${loadGenerator}"
+                                println "Command: ${taskData.scriptRun}"
 
+                                // Сохраняем JSON профиль в файл
+                                sh "echo '${taskData.profileJson}' > ${taskData.profilePath}"
 
+                                // Запускаем тест на генераторе
+                                sh 'java -DGRAPHITE_HOST=localhost -DGRAPHITE_PORT=2003 -DLOAD_GENERATOR=localhost -DPROFILE=./profiles/test_profile.json -cp performance-test-gatling.jar io.gatling.app.Gatling -s gatling.TestRunner'
+                            }
                         }
                     }
 
@@ -160,27 +162,33 @@ pipeline {
                 }
             }
         }
-
-
-
     }
 
     post {
         always {
             script {
                 println '=========== CREATE LOG FOLDER JENKINS ==========='
-            }
-        }
 
-        success {
-            script {
-                println '=========== CREATE LOG FOLDER JENKINS ==========='
+                println '1. Archive Test Artifacts'
+                archiveArtifacts artifacts: "${env.LOG_FOLDER_PATH}/**", allowEmptyArchive: true
+
+                println '2. Delete Test Logs Folder'
+                sh "rm -rf ${env.LOG_FOLDER_PATH}/*"
+
+                println '3. Delete Jar'
+                sh "rm -rf ${env.JAR_NAME}"
             }
         }
 
         unsuccessful {
             script {
-                println '=========== STOP JAVA PROCESS TO GENERATORS ==========='
+                println '=========== STOP JAVA PROCESS ON GENERATORS ==========='
+                groupedMap.each { generator, testProfile ->
+                    node(generator) {
+                        println "1. Kill Process Generator - ${generator}"
+                        sh "sudo kill \$(pgrep -f ${testProfile.COMMON_SETTINGS.MODULE_NAME})"
+                    }
+                }
             }
         }
     }

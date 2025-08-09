@@ -142,8 +142,8 @@ public class GeneratePregenerationProfile {
             for (Profile profile : tp.getProfiles()) {
                 long pacing = getStepPace(stepTps, profile.getPacing());
                 long stepUsers = (long) Math.ceil(stepTps * pacing);
-                double validTps = 1.0 / (pacing / (double) stepUsers);
-                double holdTime = finalData.get(key) / stepTps / 60.0;
+                double validTps = Math.ceil(1.0 / (pacing / (double) stepUsers));
+                double holdTime = finalData.get(key) / validTps / 60.0;
 
                 profile.setSteps(new ArrayList<>(List.of(
                         new Step(0.0, 0.0, 0.5 * (depth - 1)),

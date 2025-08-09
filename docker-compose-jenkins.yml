@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins-server
+    ports:
+      - "8080:8080"      # Порт для веб-интерфейса Jenkins
+      - "50000:50000"    # Порт для соединения агентов
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    privileged: true
+
+  jenkins-agent:
+    image: jenkins/inbound-agent
+    container_name: jenkins-agent
+    environment:
+      - JENKINS_URL=http://jenkins-server:8080
+      - JENKINS_AGENT_NAME=agent
+      - JENKINS_SECRET=<secret_from_jenkins_master>  # Секрет агента, получить в настройках Jenkins
+      - JENKINS_AGENT_WORKDIR=/home/jenkins/agent
+    depends_on:
+      - jenkins
+
+volumes:
+  jenkins_home:

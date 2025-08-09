@@ -26,7 +26,7 @@ public class AuthorizationAdminTest extends Simulation implements Runnable {
         HashMap<String, ClosedInjectionStep[]> profile = PropertyHelper.getClosedProfile(testProfile, properties);
 
         HttpProtocolBuilder httpProtocol = HttpDsl.http
-                .baseUrl(properties.get("PROTOCOL") + "://" + properties.get("HOST"))
+                .baseUrl("http://localhost:8080/login?from=%2F")
                 .disableCaching()
                 .userAgentHeader("Gatling/Performance Test");
 
