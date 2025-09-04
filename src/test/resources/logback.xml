@@ -11,13 +11,17 @@
 
     <!-- Файловый аппендер с ограничением размера и количества файлов -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/app.log</file>
+        <file>
+            ./logs/${MODULE_NAME:-MODULE_ONE}/${DATE_NOW:-1970-01-01}/${LOG_FILE_NAME:-gatling}/${LOG_FILE_NAME:-gatling}_${DATE_TIME_NOW:-1970-01-01_00-00-00}.log
+        </file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>logs/app_%i.log.zip</fileNamePattern>
+            <fileNamePattern>
+                ./logs/${MODULE_NAME:-MODULE_ONE}/${DATE_NOW:-1970-01-01}/${LOG_FILE_NAME:-gatling}/${LOG_FILE_NAME:-gatling}_${DATE_TIME_NOW:-1970-01-01_00-00-00}_#%i.log.zip
+            </fileNamePattern>
             <minIndex>2</minIndex>
             <maxIndex>3</maxIndex>
         </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+        <triggeringPolicy class="ru.gatling.logger.LimitedFileSizeAppender">
             <maxFileSize>1MB</maxFileSize>
         </triggeringPolicy>
         <encoder>
@@ -34,7 +38,7 @@
         <appender-ref ref="FILE"/>
     </logger>
 
-    <logger level="${LEVEL_FILE_LOG:-INFO}" name="gatling">
+    <logger level="${LEVEL_FILE_LOG:-INFO}" name="ru.gatling">
         <appender-ref ref="FILE"/>
     </logger>
 </configuration>

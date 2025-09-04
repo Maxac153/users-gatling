@@ -59,6 +59,7 @@ class TestsParam {
 def groupedMap = [:]
 
 pipeline {
+    // master
     agent { label 'test2' }
     parameters {
         booleanParam(name: 'BUILD_JAR_ENABLE', defaultValue: false, description: 'Нужно ли пересобрать обновить исходники на генераторе')
@@ -127,8 +128,18 @@ pipeline {
                         def profileJson = new JsonBuilder(cleanProfile).toString()
                         def profilePath = "test_profile_${loadGenerator}.json"
 
+                        // Текущая дата
+                        def now = new Date()
+                        def dateNow = now.format("yyyy-MM-dd")
+                        def dateTimeNow = now.format("yyyy-MM-dd_HH-mm-ss")
+
                         def scriptRun = "java -DGRAPHITE_HOST=${testProfile.COMMON_SETTINGS.RUN_SETTINGS.DATASOURCE_HOST} " +
                                 "-DGRAPHITE_PORT=${testProfile.COMMON_SETTINGS.RUN_SETTINGS.DATASOURCE_PORT} " +
+                                "-DMODULE_NAME=${testProfile.COMMON_SETTINGS.RUN_SETTINGS.MODULE_NAME} " +
+                                "-DDATE_NOW=" + dateNow + " " +
+                                "-DDATE_TIME_NOW=" + dateTimeNow + " " +
+                                "-DLEVEL_CONSOLE_LOG=${testProfile.COMMON_SETTINGS.RUN_SETTINGS.LEVEL_CONSOLE_LOG} " +
+                                "-DLEVEL_FILE_LOG=${testProfile.COMMON_SETTINGS.RUN_SETTINGS.LEVEL_FILE_LOG} " +
                                 "-DLOAD_GENERATOR=${loadGenerator} " +
                                 "-DPROFILE=${profilePath} -cp performance-test-gatling.jar io.gatling.app.Gatling -s gatling.TestRunner"
 

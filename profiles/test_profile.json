@@ -5,7 +5,7 @@
         "LOAD_GENERATOR": "test",
         "ENV": "redis",
         "TEST_NAME": "authorization_1",
-        "SIMULATION_CLASS": "gatling.users.authorization.AuthorizationAdminTest"
+        "SIMULATION_CLASS": "ru.gatling.users.authorization.AuthorizationAdminTest"
       },
       "PROFILE": [
         {
@@ -35,7 +35,7 @@
         "LOAD_GENERATOR": "test",
         "ENV": "redis",
         "TEST_NAME": "authorization_2",
-        "SIMULATION_CLASS": "gatling.users.authorization.AuthorizationAdminTest"
+        "SIMULATION_CLASS": "ru.gatling.users.authorization.AuthorizationAdminTest"
       },
       "PROFILE": [
         {
