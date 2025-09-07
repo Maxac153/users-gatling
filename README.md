@@ -29,6 +29,10 @@
 ## Jenkins
 
 ```bash
+
+```
+
+```bash
 curl -sO http://localhost:8080/jnlpJars/agent.jar;
 java -jar agent.jar -url http://localhost:8080/ -secret 7f3fc082646ef94b9c345b9f0a379eb819b858a40e3cb2debaffe544d70b2ad6 -name test -webSocket -workDir "/home/jenkins/agent"
 ```

@@ -141,7 +141,7 @@ pipeline {
                                 "-DLEVEL_CONSOLE_LOG=${testProfile.COMMON_SETTINGS.RUN_SETTINGS.LEVEL_CONSOLE_LOG} " +
                                 "-DLEVEL_FILE_LOG=${testProfile.COMMON_SETTINGS.RUN_SETTINGS.LEVEL_FILE_LOG} " +
                                 "-DLOAD_GENERATOR=${loadGenerator} " +
-                                "-DPROFILE=${profilePath} -cp performance-test-gatling.jar io.gatling.app.Gatling -s gatling.TestRunner"
+                                "-DPROFILE=${profilePath} -cp performance-test-gatling.jar io.gatling.app.Gatling -s ru.gatling.TestRunner"
 
                         preparedTasks[loadGenerator] = [
                                 profileJson: profileJson,

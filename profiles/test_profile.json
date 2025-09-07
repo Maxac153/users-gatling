@@ -18,9 +18,9 @@
               "HOLD_TIME": 1.0
             },
             {
-              "TPS": 7.0,
-              "RAMP_TIME": 2.1346,
-              "HOLD_TIME": 9.787380952
+              "TPS": 1.0,
+              "RAMP_TIME": 1.0,
+              "HOLD_TIME": 2.0
             }
           ]
         }
@@ -44,8 +44,8 @@
           "STEPS": [
             {
               "TPS": 7.0,
-              "RAMP_TIME": 1.9759333333,
-              "HOLD_TIME": 10.569722222
+              "RAMP_TIME": 1.0,
+              "HOLD_TIME": 2.0
             }
           ]
         }
