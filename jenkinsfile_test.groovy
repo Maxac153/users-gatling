@@ -193,20 +193,24 @@ pipeline {
             script {
                 println '=========== CREATE LOG FOLDER JENKINS ==========='
 
-                try {
-                    println '1. Archive Test Artifacts'
-                    archiveArtifacts artifacts: "${env.LOG_FOLDER_PATH}/**", allowEmptyArchive: true
-                } catch (Exception e) {
-                    println "Failed To Archive Test Artifacts: ${e.message}"
-                    e.printStackTrace()
-                }
+                groupedMap.eachWithIndex { generator, testProfile, index ->
+                    node(generator) {
+                        try {
+                            println '1. Archive Test Artifacts'
+                            archiveArtifacts artifacts: "${env.LOG_FOLDER_PATH}/**", allowEmptyArchive: true
+                        } catch (Exception e) {
+                            println "Failed To Archive Test Artifacts: ${e.message}"
+                            e.printStackTrace()
+                        }
 
-                try {
-                    println '2. Delete Test Logs Folder'
-                    sh "rm -rf ${env.LOG_FOLDER_PATH}"
-                } catch (Exception e) {
-                    println "Failed To Delete Test Logs Folder: ${e.message}"
-                    e.printStackTrace()
+                        try {
+                            println '2. Delete Test Logs Folder'
+                            sh "rm -rf ${env.LOG_FOLDER_PATH}"
+                        } catch (Exception e) {
+                            println "Failed To Delete Test Logs Folder: ${e.message}"
+                            e.printStackTrace()
+                        }
+                    }
                 }
             }
         }
