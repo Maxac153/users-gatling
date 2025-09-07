@@ -28,9 +28,7 @@
 
 ## Jenkins
 
-```bash
-
-```
+// TODO добавить заплонированный запуск
 
 ```bash
 curl -sO http://localhost:8080/jnlpJars/agent.jar;
