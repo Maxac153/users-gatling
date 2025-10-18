@@ -166,7 +166,6 @@ pipeline {
                             }
                         }
                     }
-
                     parallel prepareTasks
 
                     println '4. Running Tests On Generators'
@@ -181,7 +180,6 @@ pipeline {
                             }
                         }
                     }
-
                     parallel runTestTasks
                 }
             }
