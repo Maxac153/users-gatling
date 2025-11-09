@@ -1,12 +1,12 @@
 package ru.gatling.users.authorization;
 
-import ru.gatling.__common.helpers.Runnable;
-import ru.gatling.users.authorization.scenario.AuthorizationScenario;
-import ru.gatling.helpers.PropertyHelper;
 import io.gatling.javaapi.core.*;
 import io.gatling.javaapi.http.HttpDsl;
 import io.gatling.javaapi.http.HttpProtocolBuilder;
+import ru.gatling.__common.helpers.Runnable;
+import ru.gatling.helpers.PropertyHelper;
 import ru.gatling.models.profile.Profile;
+import ru.gatling.users.authorization.scenario.AuthorizationScenario;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +15,7 @@ import java.util.Map;
 public class AuthorizationAdminTest extends Simulation implements Runnable {
     @Override
     public PopulationBuilder run(
+            String scenarioName,
             Map<String, Object> testSettings,
             ArrayList<Profile> testProfile
     ) {
@@ -31,8 +32,7 @@ public class AuthorizationAdminTest extends Simulation implements Runnable {
                 .userAgentHeader("Gatling/Performance Test");
 
         ScenarioBuilder scenarioBuilder = AuthorizationScenario.authorizationAdminScenario(
-                properties,
-                "AUTHORIZATION_ADMIN_SCENARIO"
+                scenarioName, properties, "AUTHORIZATION_ADMIN_SCENARIO"
         );
 
         if (!Boolean.parseBoolean(properties.get("DEBUG_ENABLE").toString())) {

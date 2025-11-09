@@ -2,14 +2,20 @@ package ru.gatling;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import ru.gatling.helpers.ReadFileHelper;
 import lombok.extern.slf4j.Slf4j;
+import ru.gatling.helpers.ReadFileHelper;
 import ru.gatling.models.graph.GraphSortResult;
-import ru.gatling.models.profile.*;
+import ru.gatling.models.profile.Profile;
+import ru.gatling.models.profile.Step;
+import ru.gatling.models.profile.TestParam;
+import ru.gatling.models.profile.TestsParam;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -18,30 +24,21 @@ import static ru.gatling.helpers.PropertyHelper.getStepPace;
 
 @Slf4j
 public class GeneratePregenerationProfile {
-    private static final Gson gson = new Gson();
+    private static final Gson GSON = new Gson();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String profilePath = System.getProperty("PROFILE_PATH", "./profiles/test_profile.json");
         String pregenProfileName = System.getProperty("PREGEN_PROFILE_NAME", "pregen_profile");
         double maxTps = Double.parseDouble(System.getProperty("MAX_TPS", "5.0"));
 
         // Load profile data (canvas or regular)
-        TestsParam testsParam;
-        String rawProfile = ReadFileHelper.readProfile(profilePath);
-        if (profilePath.contains("canvas")) {
-            Canvas canvas = new Gson().fromJson(rawProfile, Canvas.class);
-            testsParam = new TestsParam();
-            testsParam.setTestParam(canvas.getElement().stream().map(Elements::getTestParam).collect(Collectors.toList()));
-            testsParam.setCommonSettings(canvas.getCommonSettings());
-        } else {
-            testsParam = new Gson().fromJson(rawProfile, TestsParam.class);
-        }
+        TestsParam testsParam = ReadFileHelper.readProfile(profilePath);
 
         double percentProfile = testsParam.getCommonSettings().getRunSettings().getPercentProfile();
-        List<TestParam> testParams = testsParam.getTestParam();
+        HashMap<String, TestParam> testParams = testsParam.getTestParam();
 
         // 1. Map REDIS_KEY_READ -> REDIS_KEY_ADD (non-null, different)
-        Map<String, String> readToAddMap = testParams.stream()
+        Map<String, String> readToAddMap = testParams.values().stream()
                 .map(TestParam::getProperties)
                 .filter(Objects::nonNull)
                 .filter(p -> p.containsKey("REDIS_KEY_READ") && p.containsKey("REDIS_KEY_ADD"))
@@ -53,7 +50,7 @@ public class GeneratePregenerationProfile {
                 ));
 
         // 2. Compute sums for each REDIS_KEY_READ
-        Map<String, Long> testData = testParams.stream()
+        Map<String, Long> testData = testParams.values().stream()
                 .collect(Collectors.toMap(
                         tp -> tp.getProperties().get("REDIS_KEY_READ").toString(),
                         tp -> {
@@ -75,7 +72,7 @@ public class GeneratePregenerationProfile {
                 ));
 
         // Add minimum threshold and 5% overhead in one pass
-        testData.replaceAll((k, v) -> v < 100 ? (long)((v + 100) * 1.05) : (long)(v * 1.05));
+        testData.replaceAll((k, v) -> v < 100 ? (long) ((v + 100) * 1.05) : (long) (v * 1.05));
 
         // 3. Accumulate sums following chains using stack
         TreeMap<String, Long> finalData = testData.keySet().stream()
@@ -103,7 +100,7 @@ public class GeneratePregenerationProfile {
         long totalSum = finalData.values().stream().mapToLong(Long::longValue).sum();
 
         // 4. Build dependency graph
-        Map<String, Set<String>> dependencyGraph = testParams.stream()
+        Map<String, Set<String>> dependencyGraph = testParams.values().stream()
                 .map(TestParam::getProperties)
                 .filter(p -> p != null && p.containsKey("REDIS_KEY_READ") && p.containsKey("REDIS_KEY_ADD"))
                 .filter(p -> !p.get("REDIS_KEY_READ").equals(p.get("REDIS_KEY_ADD")))
@@ -116,7 +113,7 @@ public class GeneratePregenerationProfile {
         GraphSortResult sortedKeys = dfs(finalData.keySet(), dependencyGraph);
 
         // 6. Map REDIS_KEY_ADD -> TestParam
-        Map<Object, TestParam> addKeyToProfile = testParams.stream()
+        Map<Object, TestParam> addKeyToProfile = testParams.values().stream()
                 .filter(tp -> tp.getRun() != null && tp.getProperties() != null)
                 .filter(tp -> {
                     Object add = tp.getProperties().get("REDIS_KEY_ADD");
@@ -132,7 +129,7 @@ public class GeneratePregenerationProfile {
         // 7. Build pregeneration profile with reversed keys
         List<String> keysReversed = new ArrayList<>(sortedKeys.getSortedKeys());
         Collections.reverse(keysReversed);
-        List<TestParam> pregenProfile = new ArrayList<>();
+        HashMap<String, TestParam> pregenProfile = new HashMap<>();
 
         for (String key : keysReversed) {
             TestParam tp = addKeyToProfile.get(key);
@@ -152,14 +149,14 @@ public class GeneratePregenerationProfile {
                         new Step(validTps, stepUsers / 0.5 / 60 / 1000.0, holdTime)
                 )));
             }
-            pregenProfile.add(tp);
+            pregenProfile.put(key, tp);
         }
 
         testsParam.setTestParam(pregenProfile);
         testsParam.getCommonSettings().getRunSettings().setPercentProfile(100.0);
 
         // 8. Find longest scenario duration
-        Profile maxDurationProfile = testsParam.getTestParam().stream()
+        Profile maxDurationProfile = testsParam.getTestParam().values().stream()
                 .flatMap(tp -> tp.getProfiles().stream())
                 .max(Comparator.comparingDouble(p -> p.getSteps().stream().mapToDouble(s -> s.getHoldTime() + s.getRampTime()).sum()))
                 .orElse(null);
@@ -172,7 +169,10 @@ public class GeneratePregenerationProfile {
 
         logProfileDurationMaxInfo(maxDurationProfile);
 
-        try (FileWriter writer = new FileWriter("./" + pregenProfileName + ".json", StandardCharsets.UTF_8)) {
+        Path outputDir = Paths.get("output");
+        Files.createDirectories(outputDir);
+
+        try (FileWriter writer = new FileWriter("./" + outputDir + "/" + pregenProfileName + ".json", StandardCharsets.UTF_8)) {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(testsParam));
             log.info("File Saved Successfully (./{}.json)", pregenProfileName);
         } catch (IOException e) {
@@ -181,7 +181,7 @@ public class GeneratePregenerationProfile {
         }
 
         log.info("Pregeneration Profile:");
-        log.info(gson.toJson(testsParam));
+        log.info(GSON.toJson(testsParam));
     }
 
     // Recursive DFS for topological sort & depth calculation with cycle detection

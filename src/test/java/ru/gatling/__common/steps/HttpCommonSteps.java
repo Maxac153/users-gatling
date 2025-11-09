@@ -1,7 +1,6 @@
 package ru.gatling.__common.steps;
 
 
-import com.google.gson.Gson;
 import io.gatling.javaapi.http.HttpDsl;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
 
@@ -9,8 +8,6 @@ import static io.gatling.javaapi.core.CoreDsl.ElFileBody;
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 
 public class HttpCommonSteps {
-    private static final Gson gson = new Gson();
-
     public static HttpRequestActionBuilder mainPage =
             HttpDsl.http("ur_users_open_main_page").get("/");
 

@@ -1,10 +1,10 @@
 package ru.gatling;
 
 import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import ru.gatling.__common.helpers.RedisHelper;
 import ru.gatling.helpers.DataFormatHelper;
 import ru.gatling.helpers.ReadFileHelper;
-import lombok.extern.slf4j.Slf4j;
 import ru.gatling.redis.RedisDeleteKeys;
 
 import java.io.BufferedReader;
@@ -22,10 +22,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public class TestDebugRunner {
-    private static final Gson gson = new Gson();
-    private static final HashMap<String, Object> redisProperty = ReadFileHelper.readEnv("redis");
-    private static final AtomicInteger index = new AtomicInteger(0);
-    private static final AtomicBoolean flagError = new AtomicBoolean(false);
+    private static final Gson GSON = new Gson();
+    private static final HashMap<String, Object> REDIS_PROPERTY = ReadFileHelper.readEnv("redis");
+    private static final AtomicInteger INDEX = new AtomicInteger(0);
+    private static final AtomicBoolean FLAG_ERROR = new AtomicBoolean(false);
 
     public static void main(String[] args) throws Exception {
         String javaPath = System.getProperty("JAVA_PATH");
@@ -80,7 +80,7 @@ public class TestDebugRunner {
             log.info(String.format("| Test Duration:     %-23.23s |", DataFormatHelper.format((calendarEnd.getTimeInMillis() - calendarStart.getTimeInMillis()) / 1000)));
             log.info(lineSeparator);
 
-            if (flagError.get()) {
+            if (FLAG_ERROR.get()) {
                 throw new Exception("Test Debug Failed!");
             }
         } else {
@@ -98,7 +98,7 @@ public class TestDebugRunner {
             String dateTimeNow
     ) {
         int currentIndex;
-        while ((currentIndex = index.getAndIncrement()) < testsList.size()) {
+        while ((currentIndex = INDEX.getAndIncrement()) < testsList.size()) {
             boolean exists = false;
             String testName = testsList.get(currentIndex);
             String[] tests = testName.split("_");
@@ -118,13 +118,13 @@ public class TestDebugRunner {
                 try {
                     Process process = Runtime.getRuntime()
                             .exec(javaPath
-                                  + " -DMODULE_NAME=" + moduleName
-                                  + " -DATE_NOW=" + dateNow
-                                  + " -DDATE_TIME_NOW=" + dateTimeNow
-                                  + " -DLOG_FILE_NAME=test_case-" + testName
-                                  + " -DTEST_SETTINGS=\"" + gson.toJson(testSettings)
-                                  + "\" -DCLASS_SIMULATION=" + classSimulations.get(tests[i]).toString()
-                                  + " -cp " + jarPath + " io.gatling.app.Gatling -s ru.vtb.gatling.TestDebugRun"
+                                    + " -DMODULE_NAME=" + moduleName
+                                    + " -DATE_NOW=" + dateNow
+                                    + " -DDATE_TIME_NOW=" + dateTimeNow
+                                    + " -DLOG_FILE_NAME=test_case-" + testName
+                                    + " -DTEST_SETTINGS=\"" + GSON.toJson(testSettings)
+                                    + "\" -DCLASS_SIMULATION=" + classSimulations.get(tests[i]).toString()
+                                    + " -cp " + jarPath + " io.gatling.app.Gatling -s ru.vtb.gatling.TestDebugRun"
                             );
                     String line;
                     BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -140,15 +140,15 @@ public class TestDebugRunner {
 
                 if (!tests[i].contains("k")) {
                     exists = RedisHelper.getInstance(
-                            redisProperty.get("REDIS_HOST").toString(),
-                            Integer.valueOf(redisProperty.get("REDIS_PORT").toString()),
-                            redisProperty.get("REDIS_LOGIN").toString(),
-                            redisProperty.get("REDIS_PASSWORD").toString()
+                            REDIS_PROPERTY.get("REDIS_HOST").toString(),
+                            Integer.valueOf(REDIS_PROPERTY.get("REDIS_PORT").toString()),
+                            REDIS_PROPERTY.get("REDIS_LOGIN").toString(),
+                            REDIS_PROPERTY.get("REDIS_PASSWORD").toString()
                     ).exists(redisKey);
 
                     if (!exists) {
                         log.error("Status: ERROR, Test Case: " + testName + " , Test: " + tests[i]);
-                        flagError.set(true);
+                        FLAG_ERROR.set(true);
                         break;
                     }
                 } else {

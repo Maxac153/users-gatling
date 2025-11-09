@@ -1,8 +1,8 @@
 package ru.gatling.users.registration.helper;
 
 import com.google.gson.Gson;
-import ru.gatling.__common.models.login.Registration;
 import net.datafaker.Faker;
+import ru.gatling.__common.models.login.Registration;
 
 public class RegistrationUserRandomHelper {
     private static final Gson gson = new Gson();

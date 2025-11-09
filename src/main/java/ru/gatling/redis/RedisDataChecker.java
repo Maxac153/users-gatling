@@ -1,17 +1,12 @@
 package ru.gatling.redis;
 
-import com.google.gson.Gson;
-import ru.gatling.helpers.ReadFileHelper;
 import lombok.extern.slf4j.Slf4j;
-import ru.gatling.models.profile.Canvas;
-import ru.gatling.models.profile.Elements;
+import redis.clients.jedis.Jedis;
+import ru.gatling.helpers.ReadFileHelper;
 import ru.gatling.models.profile.TestParam;
 import ru.gatling.models.profile.TestsParam;
-import redis.clients.jedis.Jedis;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -21,27 +16,12 @@ import static ru.gatling.helpers.PropertyHelper.getStepPace;
 public class RedisDataChecker {
     public static void main(String[] args) throws Exception {
         String profilePath = System.getProperty("PROFILE_PATH", "profiles/test_profile.json");
-        TestsParam testsParam = new TestsParam();
-        String testsParamString = ReadFileHelper.readProfile(profilePath);
-
-        if (profilePath.contains("canvas")) {
-            Canvas testsParamCanvas = new Gson().fromJson(testsParamString, Canvas.class);
-            List<TestParam> testParams = new ArrayList<>();
-
-            for (Elements testParam : testsParamCanvas.getElement()) {
-                testParams.add(testParam.getTestParam());
-            }
-
-            testsParam.setTestParam(testParams);
-            testsParam.setCommonSettings(testsParamCanvas.getCommonSettings());
-        } else {
-            testsParam = new Gson().fromJson(testsParamString, TestsParam.class);
-        }
+        TestsParam testsParam = ReadFileHelper.readProfile(profilePath);
 
         Double percentProfile = testsParam.getCommonSettings().getRunSettings().getPercentProfile();
-        List<TestParam> testParams = testsParam.getTestParam();
+        HashMap<String, TestParam> testParams = testsParam.getTestParam();
 
-        Map<String, Long> testData = testParams.stream()
+        Map<String, Long> testData = testParams.values().stream()
                 .collect(Collectors.toMap(
                         tp -> tp.getProperties().get("REDIS_KEY_READ").toString(),
                         tp -> {
@@ -84,7 +64,7 @@ public class RedisDataChecker {
 
             if (difference < 0) {
                 log.warn(format);
-                if (differencePercent < 0.60) {
+                if (differencePercent < 1) {
                     flagError = true;
                 }
             } else {

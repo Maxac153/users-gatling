@@ -2,6 +2,9 @@ package ru.gatling.helpers;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import ru.gatling.models.profile.Canvas;
+import ru.gatling.models.profile.TestParam;
+import ru.gatling.models.profile.TestsParam;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -48,7 +51,7 @@ public class ReadFileHelper {
         return strings;
     }
 
-    public static String readProfile(String filePath) {
+    private static String readJson(String filePath) {
         StringBuilder data = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), StandardCharsets.UTF_8))) {
             String line;
@@ -63,7 +66,7 @@ public class ReadFileHelper {
     }
 
     public static HashMap<String, Object> readSimulationCase(String testCasePath) {
-        return new HashMap<>(gson.fromJson(ReadFileHelper.readProfile(testCasePath), type));
+        return new HashMap<>(gson.fromJson(ReadFileHelper.readJson(testCasePath), type));
     }
 
     public static HashMap<String, Object> readEnv(String env) {
@@ -73,11 +76,29 @@ public class ReadFileHelper {
 
             for (String envPath : envPaths) {
                 if (!envPath.isEmpty()) {
-                    envMap.putAll(gson.fromJson(ReadFileHelper.readProfile("./env/" + envPath + ".json"), type));
+                    envMap.putAll(gson.fromJson(ReadFileHelper.readJson("./env/" + envPath + ".json"), type));
                 }
             }
         }
 
         return envMap;
     }
+
+    public static TestsParam readProfile(String profilePath) {
+        String json = ReadFileHelper.readJson(profilePath);
+        TestsParam testsParam = new TestsParam();
+
+        if (profilePath.contains("canvas")) {
+            Canvas testsParamCanvas = new Gson().fromJson(json, Canvas.class);
+            HashMap<String, TestParam> testParams = new HashMap<>(testsParamCanvas.getElement());
+
+            testsParam.setTestParam(testParams);
+            testsParam.setCommonSettings(testsParamCanvas.getCommonSettings());
+        } else {
+            testsParam = new Gson().fromJson(json, TestsParam.class);
+        }
+
+        return testsParam;
+    }
+
 }

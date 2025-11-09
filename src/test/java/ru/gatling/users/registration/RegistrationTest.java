@@ -1,15 +1,15 @@
 package ru.gatling.users.registration;
 
-import ru.gatling.__common.helpers.Runnable;
-import ru.gatling.users.registration.scenario.RegistrationScenario;
-import ru.gatling.helpers.PropertyHelper;
 import io.gatling.javaapi.core.ClosedInjectionStep;
 import io.gatling.javaapi.core.PopulationBuilder;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.Simulation;
 import io.gatling.javaapi.http.HttpDsl;
 import io.gatling.javaapi.http.HttpProtocolBuilder;
+import ru.gatling.__common.helpers.Runnable;
+import ru.gatling.helpers.PropertyHelper;
 import ru.gatling.models.profile.Profile;
+import ru.gatling.users.registration.scenario.RegistrationScenario;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +20,7 @@ import static io.gatling.javaapi.core.CoreDsl.atOnceUsers;
 public class RegistrationTest extends Simulation implements Runnable {
     @Override
     public PopulationBuilder run(
+            String scenarioName,
             Map<String, Object> testSettings,
             ArrayList<Profile> testProfile
     ) {
@@ -36,7 +37,9 @@ public class RegistrationTest extends Simulation implements Runnable {
                 .disableCaching()
                 .userAgentHeader("Gatling/Performance Test");
 
-        ScenarioBuilder scenarioBuilder = RegistrationScenario.registration(properties);
+        ScenarioBuilder scenarioBuilder = RegistrationScenario.registration(
+                scenarioName, properties, "REGISTRATION_SCENARIO"
+        );
 
         if (!Boolean.parseBoolean(properties.get("DEBUG_ENABLE").toString())) {
             return scenarioBuilder.injectClosed(profile.get("REGISTRATION_SCENARIO")).protocols(httpProtocol);

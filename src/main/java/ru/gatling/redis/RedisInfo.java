@@ -1,23 +1,23 @@
 package ru.gatling.redis;
 
-import ru.gatling.helpers.DataFormatHelper;
-import ru.gatling.helpers.ReadFileHelper;
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.params.ScanParams;
 import redis.clients.jedis.resps.ScanResult;
+import ru.gatling.helpers.DataFormatHelper;
+import ru.gatling.helpers.ReadFileHelper;
 
 import java.util.HashMap;
 
 @Slf4j
 public class RedisInfo {
-    private static final long[] units = {1_099_511_627_776L, 1_073_741_824L, 1_048_576L, 1024L};
-    private static final String[] unitNames = {"Tb", "Gb", "Mb", "Kb"};
+    private static final long[] UNITS = {1_099_511_627_776L, 1_073_741_824L, 1_048_576L, 1024L};
+    private static final String[] UNIT_NAMES = {"Tb", "Gb", "Mb", "Kb"};
 
     private static String formatSize(long sizeInBytes) {
-        for (int i = 0; i < units.length; i++) {
-            if (Math.abs(sizeInBytes) >= units[i]) {
-                return String.format("%.2f %s", (double) sizeInBytes / units[i], unitNames[i]);
+        for (int i = 0; i < UNITS.length; i++) {
+            if (Math.abs(sizeInBytes) >= UNITS[i]) {
+                return String.format("%.2f %s", (double) sizeInBytes / UNITS[i], UNIT_NAMES[i]);
             }
         }
         return String.format("%d B", sizeInBytes);

@@ -1,7 +1,7 @@
 target/
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+!scripts/python/src/main/**/target/
+!scripts/python/src/test/**/target/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
@@ -28,8 +28,8 @@ target/
 /nbdist/
 /.nb-gradle/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+!scripts/python/src/main/**/build/
+!scripts/python/src/test/**/build/
 
 ### VS Code ###
 .vscode/
@@ -40,3 +40,4 @@ build/
 /results/
 /logs/
 /pregen_profile.json
+/output/

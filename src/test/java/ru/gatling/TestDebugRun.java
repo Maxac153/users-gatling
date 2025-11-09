@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TestDebugRun extends Simulation {
-    private static final Gson gson = new Gson();
+    private static final Gson GSON = new Gson();
 
     {
         setUp(testRunner());
@@ -22,7 +22,7 @@ public class TestDebugRun extends Simulation {
         try {
             Type type = new TypeToken<HashMap<String, String>>() {
             }.getType();
-            HashMap<String, String> testSettings = gson.fromJson(System.getProperty("TEST_SETTINGS").replace("\"", ""), type);
+            HashMap<String, String> testSettings = GSON.fromJson(System.getProperty("TEST_SETTINGS").replace("\"", ""), type);
             Class<?> classSimulation = Class.forName(System.getProperty("CLASS_SIMULATION"));
             Method method = classSimulation.getMethod("run", Map.class, ArrayList.class);
             return (PopulationBuilder) method.invoke(

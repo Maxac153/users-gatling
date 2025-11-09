@@ -9,8 +9,6 @@ public class Run {
     private String generator;
     @SerializedName("ENV")
     private String env;
-    @SerializedName("LONG_FILE_NAME")
-    private String logFileName;
     @SerializedName("SIMULATION_CLASS")
     private String simulationClass;
 }

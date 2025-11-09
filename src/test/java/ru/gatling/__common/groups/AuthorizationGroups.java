@@ -1,10 +1,10 @@
 package ru.gatling.__common.groups;
 
+import io.gatling.javaapi.core.ChainBuilder;
+import io.gatling.javaapi.http.HttpDsl;
 import ru.gatling.__common.helpers.RedisClientHelper;
 import ru.gatling.__common.helpers.RedisHelper;
 import ru.gatling.__common.steps.HttpCommonSteps;
-import io.gatling.javaapi.core.ChainBuilder;
-import io.gatling.javaapi.http.HttpDsl;
 import ru.gatling.models.redis.RedisAddMode;
 import ru.gatling.models.redis.RedisReadMode;
 

@@ -2,19 +2,22 @@ package ru.gatling;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import ru.gatling.helpers.ReadFileHelper;
 import lombok.extern.slf4j.Slf4j;
-import ru.gatling.models.profile.*;
+import ru.gatling.helpers.ReadFileHelper;
+import ru.gatling.models.profile.Profile;
+import ru.gatling.models.profile.Step;
+import ru.gatling.models.profile.TestParam;
+import ru.gatling.models.profile.TestsParam;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 @Slf4j
 public class StepGenerator {
-    private static final Gson gson = new Gson();
+    private static final Gson GSON = new Gson();
 
     public static void main(String[] args) {
         String profilePath = System.getProperty("PROFILE_PATH", "./profiles/test_profile.json");
@@ -25,27 +28,11 @@ public class StepGenerator {
         double rumpTime = Double.parseDouble(System.getProperty("RUMP_TIME", "15.0"));
         double holdTime = Double.parseDouble(System.getProperty("HOLD_TIME", "30.0"));
 
-        TestsParam testsParam = new TestsParam();
-        String testsParamString = ReadFileHelper.read(profilePath);
-
-        if (profilePath.contains("canvas")) {
-            Canvas testsParamCanvas = gson.fromJson(testsParamString, Canvas.class);
-            List<TestParam> testParams = new ArrayList<>();
-
-            for (Elements testParam : testsParamCanvas.getElement()) {
-                testParams.add(testParam.getTestParam());
-            }
-
-            testsParam.setTestParam(testParams);
-            testsParam.setCommonSettings(testsParamCanvas.getCommonSettings());
-        } else {
-            testsParam = gson.fromJson(testsParamString, TestsParam.class);
-        }
-
+        TestsParam testsParam = ReadFileHelper.readProfile(profilePath);
         Double percentProfile = testsParam.getCommonSettings().getRunSettings().getPercentProfile();
-        List<TestParam> testParams = testsParam.getTestParam();
+        HashMap<String, TestParam> testParams = testsParam.getTestParam();
 
-        for (TestParam testParam : testParams) {
+        for (TestParam testParam : testParams.values()) {
             for (Profile profile : testParam.getProfiles()) {
                 double tps = 0.0;
                 double pause = 0.0;
@@ -82,6 +69,6 @@ public class StepGenerator {
         }
 
         log.info("New Profile:");
-        log.info(gson.toJson(testsParam));
+        log.info(GSON.toJson(testsParam));
     }
 }

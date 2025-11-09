@@ -2,10 +2,10 @@ package ru.gatling.models.profile;
 
 import lombok.Data;
 
-import java.util.List;
+import java.util.HashMap;
 
 @Data
 public class Canvas {
-    private List<Elements> element;
+    private HashMap<String, TestParam> element;
     private CommonSettings commonSettings;
 }

@@ -1,8 +1,8 @@
 package ru.gatling.__common.helpers;
 
+import redis.clients.jedis.Jedis;
 import ru.gatling.models.redis.RedisAddMode;
 import ru.gatling.models.redis.RedisReadMode;
-import redis.clients.jedis.Jedis;
 
 public class RedisHelper {
     private static RedisHelper instance;

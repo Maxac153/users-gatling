@@ -13,10 +13,6 @@ public class RunSettings {
     private String levelConsoleLog;
     @SerializedName("LEVEL_FILE_LOG")
     private String levelFileLog;
-    @SerializedName("DATASOURCE")
-    Datasource datasource;
-    @SerializedName("LOAD_TOOL")
-    private LoadTool loadTool;
     @SerializedName("DATASOURCE_HOST")
     String datasourceHost;
     @SerializedName("DATASOURCE_PORT")
