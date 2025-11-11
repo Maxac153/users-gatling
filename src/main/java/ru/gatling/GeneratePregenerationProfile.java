@@ -13,9 +13,6 @@ import ru.gatling.models.profile.TestsParam;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,7 +26,7 @@ public class GeneratePregenerationProfile {
     public static void main(String[] args) throws IOException {
         String profilePath = System.getProperty("PROFILE_PATH", "./profiles/test_profile.json");
         String pregenProfileName = System.getProperty("PREGEN_PROFILE_NAME", "pregen_profile");
-        double maxTps = Double.parseDouble(System.getProperty("MAX_TPS", "5.0"));
+        double maxTps = Double.parseDouble(System.getProperty("MAX_TPS", "10.0"));
 
         // Load profile data (canvas or regular)
         TestsParam testsParam = ReadFileHelper.readProfile(profilePath);
@@ -68,11 +65,11 @@ public class GeneratePregenerationProfile {
                                             }))
                                     .sum();
                         },
-                        (e, r) -> e <= 100 ? e + 100 : e + r
+                        (e, r) -> e <= 200 ? e + 200 : e + r
                 ));
 
-        // Add minimum threshold and 5% overhead in one pass
-        testData.replaceAll((k, v) -> v < 100 ? (long) ((v + 100) * 1.05) : (long) (v * 1.05));
+        // Add minimum threshold and 10% overhead in one pass
+        testData.replaceAll((k, v) -> v < 200 ? (long) ((v + 200) * 1.10) : (long) (v * 1.10));
 
         // 3. Accumulate sums following chains using stack
         TreeMap<String, Long> finalData = testData.keySet().stream()
@@ -96,6 +93,7 @@ public class GeneratePregenerationProfile {
                         TreeMap::new
                 ));
 
+        // mdm - database data
         finalData.keySet().removeIf(key -> key.contains("mdm"));
         long totalSum = finalData.values().stream().mapToLong(Long::longValue).sum();
 
@@ -146,7 +144,7 @@ public class GeneratePregenerationProfile {
 
                 profile.setSteps(new ArrayList<>(List.of(
                         new Step(0.0, 0.0, 0.5 * (depth - 1)),
-                        new Step(validTps, stepUsers / 0.5 / 60 / 1000.0, holdTime)
+                        new Step(validTps, stepUsers / 0.1 / 60 / 1000.0, holdTime)
                 )));
             }
             pregenProfile.put(key, tp);
@@ -169,10 +167,7 @@ public class GeneratePregenerationProfile {
 
         logProfileDurationMaxInfo(maxDurationProfile);
 
-        Path outputDir = Paths.get("output");
-        Files.createDirectories(outputDir);
-
-        try (FileWriter writer = new FileWriter("./" + outputDir + "/" + pregenProfileName + ".json", StandardCharsets.UTF_8)) {
+        try (FileWriter writer = new FileWriter("./" + pregenProfileName + ".json", StandardCharsets.UTF_8)) {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(testsParam));
             log.info("File Saved Successfully (./{}.json)", pregenProfileName);
         } catch (IOException e) {
@@ -201,7 +196,7 @@ public class GeneratePregenerationProfile {
     private static int visit(String node, Map<String, Set<String>> graph, Set<String> visited,
                              Set<String> visiting, Map<String, Integer> depthMap, List<String> sortedKeys) {
         if (visited.contains(node)) return depthMap.get(node);
-        if (visiting.contains(node)) throw new IllegalStateException("Cycle detected at " + node);
+        if (visiting.contains(node)) throw new IllegalStateException("Cycle Detected At " + node);
 
         visiting.add(node);
         int maxDepth = graph.getOrDefault(node, Collections.emptySet()).stream()

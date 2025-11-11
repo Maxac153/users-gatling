@@ -11,9 +11,11 @@
 
     <!-- Файловый аппендер с ограничением размера и количества файлов -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/app.log</file>
+        <file>logs/${SYSTEM_NAME:-SYSTEM_ONE}/${DATE_NOW:-1970-01-01}/${DATE_TIME_NOW:-1970-01-01_00-00-00}/${LOG_FILE_NAME:-gatling}/${LOG_FILE_NAME:-gatling}_${DATE_TIME_NOW:-1970-01-01_00-00-00}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>logs/app_%i.log.zip</fileNamePattern>
+            <fileNamePattern>
+                logs/${SYSTEM_NAME:-SYSTEM_ONE}/${DATE_NOW:-1970-01-01}/${DATE_TIME_NOW:-1970-01-01_00-00-00}/${LOG_FILE_NAME:-gatling}/${LOG_FILE_NAME:-gatling}_${DATE_TIME_NOW:-1970-01-01_00-00-00}_#%i.log.zip
+            </fileNamePattern>
             <minIndex>2</minIndex>
             <maxIndex>3</maxIndex>
         </rollingPolicy>

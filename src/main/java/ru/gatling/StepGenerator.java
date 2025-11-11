@@ -12,6 +12,9 @@ import ru.gatling.models.profile.TestsParam;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -19,7 +22,7 @@ import java.util.HashMap;
 public class StepGenerator {
     private static final Gson GSON = new Gson();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String profilePath = System.getProperty("PROFILE_PATH", "./profiles/test_profile.json");
         String modifiedProfileName = System.getProperty("MODIFIED_PROFILE_NAME", "modified_profile");
         int numberSteps = Integer.parseInt(System.getProperty("NUMBER_STEPS", "3"));
@@ -59,10 +62,12 @@ public class StepGenerator {
             }
         }
 
+        Path outputDir = Paths.get("output");
+        Files.createDirectories(outputDir);
         testsParam.getCommonSettings().getRunSettings().setPercentProfile(100.0);
-        try (FileWriter writer = new FileWriter("./" + modifiedProfileName + ".json", StandardCharsets.UTF_8)) {
+        try (FileWriter writer = new FileWriter("./" + outputDir + "/" + modifiedProfileName + ".json", StandardCharsets.UTF_8)) {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(testsParam));
-            log.info("File Saved Successfully (./{}.json", modifiedProfileName);
+            log.info("File Saved Successfully (./{}/{}.json", outputDir, modifiedProfileName);
         } catch (IOException e) {
             log.error("Error Save Profile: {}", e.getMessage());
             throw new RuntimeException(e);

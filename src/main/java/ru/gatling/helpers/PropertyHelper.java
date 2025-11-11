@@ -28,7 +28,7 @@ public class PropertyHelper {
         Type type = new TypeToken<HashMap<String, Object>>() {
         }.getType();
         for (String propertiesPath : propertiesPaths) {
-            properties.putAll(gson.fromJson(ReadFileHelper.read(propertiesPath), type));
+            properties.putAll(gson.fromJson(ReadFileHelper.readRelativeClass(propertiesPath), type));
         }
 
         // Параметры теста из системы

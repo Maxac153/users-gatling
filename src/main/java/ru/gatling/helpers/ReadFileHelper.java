@@ -17,7 +17,7 @@ public class ReadFileHelper {
     private static final Type type = new TypeToken<HashMap<String, String>>() {
     }.getType();
 
-    public static String read(String filePath) {
+    public static String readRelativeClass(String filePath) {
         StringBuilder contentBuilder = new StringBuilder();
         try (InputStream inputStream = ReadFileHelper.class.getClassLoader().getResourceAsStream(filePath)) {
             if (inputStream == null) {
@@ -51,7 +51,7 @@ public class ReadFileHelper {
         return strings;
     }
 
-    private static String readJson(String filePath) {
+    private static String read(String filePath) {
         StringBuilder data = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), StandardCharsets.UTF_8))) {
             String line;
@@ -66,7 +66,7 @@ public class ReadFileHelper {
     }
 
     public static HashMap<String, Object> readSimulationCase(String testCasePath) {
-        return new HashMap<>(gson.fromJson(ReadFileHelper.readJson(testCasePath), type));
+        return new HashMap<>(gson.fromJson(ReadFileHelper.read(testCasePath), type));
     }
 
     public static HashMap<String, Object> readEnv(String env) {
@@ -76,7 +76,7 @@ public class ReadFileHelper {
 
             for (String envPath : envPaths) {
                 if (!envPath.isEmpty()) {
-                    envMap.putAll(gson.fromJson(ReadFileHelper.readJson("./env/" + envPath + ".json"), type));
+                    envMap.putAll(gson.fromJson(ReadFileHelper.read("./env/" + envPath + ".json"), type));
                 }
             }
         }
@@ -85,7 +85,7 @@ public class ReadFileHelper {
     }
 
     public static TestsParam readProfile(String profilePath) {
-        String json = ReadFileHelper.readJson(profilePath);
+        String json = ReadFileHelper.read(profilePath);
         TestsParam testsParam = new TestsParam();
 
         if (profilePath.contains("canvas")) {

@@ -2,8 +2,8 @@
   "TESTS_PARAM": {
     "authorization_1": {
       "RUN": {
-        "LOAD_GENERATOR": "test",
         "ENV": "redis",
+        "LOAD_GENERATOR": "test",
         "SIMULATION_CLASS": "ru.gatling.users.authorization.AuthorizationAdminTest"
       },
       "PROFILE": [
@@ -31,8 +31,8 @@
     },
     "authorization_2": {
       "RUN": {
-        "LOAD_GENERATOR": "test",
         "ENV": "redis",
+        "LOAD_GENERATOR": "test",
         "SIMULATION_CLASS": "ru.gatling.users.authorization.AuthorizationAdminTest"
       },
       "PROFILE": [
