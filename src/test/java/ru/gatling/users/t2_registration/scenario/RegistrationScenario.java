@@ -1,9 +1,9 @@
-package ru.gatling.users.registration.scenario;
+package ru.gatling.users.t2_registration.scenario;
 
 import io.gatling.javaapi.core.CoreDsl;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import ru.gatling.helpers.PropertyHelper;
-import ru.gatling.users.registration.gropus.RegistrationGroups;
+import ru.gatling.users.t2_registration.gropus.RegistrationGroups;
 
 import java.util.Map;
 

@@ -4,9 +4,63 @@
 
 Пример тестового фреймворка для быстрого старта на ([Gatling](https://docs.gatling.io/)).
 
+1. [Список систем](#список-систем);
+2. [Структура каталогов](#структура-каталогов);
+   - 2.1 [Структура папок common](#структура-папки-common);
+   - 2.2 [Структура модуля](#структура-модуля);
+3. [Структура тестов](#структура-тестов);
+4. [Работа с properties в проекте](#работа-с-properties-в-проекте);
+5. [Правила оформления кода в проекте](#правила-оформления-кода-в-проекте);
+   - 5.1 [Структура проекта](#структура-проекта);
+   - 5.2 [Наименование переменных](#наименование-переменных);
+   - 5.3 [Наименование scenario, steps и groups](#наименование-scenario-steps-и-groups);
+6. [Профиль нагрузки](#профиль-нагрузки);
+7. [Редактор профиля](#редактор-профиля);
+8. [Запуск тестов](#запуск-тестов);
+9. [Проверка тестов перед запуском](#проверка-тестов-перед-запуском);
+10. [Мониторинг](#мониторинг);
+11. [Сбор отчёта](#сбор-отчёта);
+12. [Вспомогательные классы для работы c redis](#вспомогательные-классы-для-работы-с-redis);
+    - 12.1 [Получить информации о Redis и Key](#получить-информацию-о-Redis-и-Keys);
+    - 12.2 [Проверка количества данных в Redis](#проверка-количества-данных-Redis);
+    - 12.3 [Добавить данные в Redis (List)](#добавить-данные-в-Redis-(List));
+    - 12.4 [Прочитать данные из Redis (List)](#прочитать-данные-из-Redis-(Redis));
+    - 12.5 [Скачать дамп по ключю](#скачать-дамп-по-ключю);
+    - 12.6 [Загрузить дамп в Redis](#загрузить-дамп-в-Redis);
+    - 12.7 [Удалить ключи по паттерну](#удалить-ключи-по-паттерну);
+    - 12.8 [Удалить все ключи из Redis](#удалить-все-ключи-из-Redis);
+13. [Вспомогательные классы](#вспомогательные-классы);
+    - 13.1 [Автоматическая генерация профиля для прегенерации данных](#автоматическая-генерация-профиля-для-прегенерации-данных);
+    - 13.2 [Изменение шагов в профиль](#изменение-шагов-в-профиле).
+
+## Список систем
+
+* [Users](./docks/system_users.md).
+
 ## Структура каталогов
 
 ![work_folder.png](img/work_folder.png)
+
+### Структура проекта
+
+* **debug_tests** - TestCase для проверки тестов;
+* **diagrams** - Вспомогательные диаграммы, взаимодействия тестов (draw.io);
+* **docks** - Документация систем (users, ...);
+* **env** - Secretes для postgres, kafka, redis, ...
+* **img** - Картинки для документации;
+* **java** - Папка с тестами;
+* **monitoring** - Настройки для InfluxDB и дашборды для Grafana;
+* **profiles** - Профели нагрузки;
+* **resources** - Ресурсы для тестов;
+* **scripts** - Вспомогательные скрипты (запуск, тестов, ...);
+* **sql** - Запросы SQL для подготовки данных или подготовки базы перед тестом;
+* **src** - Вспомогательные классы;
+* **ssl_kafka** - Kafka сертификаты;
+* **target** - Результаты сборки проекта;
+* **.gitignore** - Файлы которые игнорируем;
+* **jar-with-dependencies.xml** - Параметры для сборки .jar файла;
+* **pom.xml** - Файл с зависимостями для проекта;
+* **README.md** - Документация проекта.
 
 ### Структура папки common
 
@@ -14,32 +68,22 @@
   * **groups** - Группа действий (UC - USER_CASE);
   * **helpers** - Вспомогательные классы;
   * **models** - PoJo классы для сериализации и десериализации;
+  * **scenario** - Общие сценарии для тестов (scenario);
   * **steps** - Общие шаги для тестов;
 
 ### Структура модуля
 
-* **users** - Модуль;
-  * **authorization** - Тестовый сценарий модуля users;
-  * **loading_avatar** - Тестовый сценарий модуля users;
-    * **groups** - Группа действий; 
-    * **scenario** - Сценарии;
-    * **steps** - Шаги в группе;
-  * **registration** - Тестовый сценарий модуля users.
-
-## Jenkins
-
-// TODO добавить заплонированный запуск
-
-```bash
-curl -sO http://localhost:8080/jnlpJars/agent.jar;
-java -jar agent.jar -url http://localhost:8080/ -secret 7f3fc082646ef94b9c345b9f0a379eb819b858a40e3cb2debaffe544d70b2ad6 -name test -webSocket -workDir "/home/jenkins/agent"
-```
-
-```bash
-curl -sO http://localhost:8080/jnlpJars/agent.jar;
-java -jar agent.jar -url http://localhost:8080/ -secret 11f8cb7f332a4d92f5e49cea361d494e75dd8bd4f18615e281e8fe557bbe37e6 -name test2 -webSocket -workDir "/home/jenkins/agent1"
-```
-
+* **pre_gen_data** - Классы для подготовки данных перед тестом;
+* **users** - Название системы;
+  * **common** - Название системы;
+    * **authorization** - Тестовый сценарий модуля users;
+      * **groups** - Группа действий;
+      * **helpers** - Вспомогательные классы модуля;
+      * **scenario** - Сценарии;
+      * **steps** - Шаги в группе;
+      * **AuthorizationAdminTest** - Тест 1;
+      * **AuthorizationUserTest** - Тест 2;
+    * **registration** - Тестовый сценарий модуля users.
 
 ## Структура тестов
 
@@ -110,10 +154,52 @@ HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getProfile(
 ### Наименование сценариев и шагов:
 
 * Использовать **lower_snake_case**;
-* Названия сценария начинать с **uc_<user_case>**;
-* Названия HTTP шагов начинать с **ur_<user_request>**;
-* Названия запросов к Database или Redis начинать с **db_<database>**;
+* Названия сценария (scenario) **`<system_name>_<script_code (1)>_<operation_name (kafka, rest, ...)>_<scenario_name, endpoint>_senario`**;
+* Названия групп (groups) **`ur_<system_name>_<script_code (1)>_<operation_name (kafka, rest, ...)>_<group_name, endpoint - (если в группе одна операция)>`**;
+* Название шагов (steps) **`ur_<system_name>_<script_code (1.1)>_<operation_name (kaffka, rest, ...)>_<operation_type (get, post, delete, send, ...)>_<step_name, endpoint>`**
+* Названия запросов к Database или Redis начинать с **`db_<system_name>_<script_code>_<database_host>_<table_name, key_name>`**;
 * Для сообщений лога использовать английский язык. Пример формата - **«Message Something Data»**.
+
+## Профиль нагрузки
+
+Профиль нагрузки хранить в папке **`./profiles/<system_code>/`**.
+
+Пример JSON профиля:
+
+```json
+
+```
+
+Пример JSON профиля для редактора профиля (Тоже может использоваться для запуска тестов):
+
+**ЯВЛЯЕТСЯ ОСНОВНЫМ ФОРМАТОМ!**
+
+```json
+
+```
+
+Описание параметров:
+"JVM_ARGS": "-Xms1g -Xmx2g",
+
+* **TESTS_PARAM** - Параметры тестов;
+    * **JOB** - Параметры для Java машины;
+        * **JVM_ARGS** - Ограничение по ОЗУ;
+        * **PARALLELISM_MAX** - Ограничение максимального количества потоков;
+        * **GENERATOR** - Где будет запускаться тесты;
+        * **TEST_NAME** - Наименования тестового класса;
+        * **TEST_FOLDER** - Путь до класса в проекте;
+    * **PROFILE** - Параметры профиля нагрузки;
+        * **Array profile** - Массив профилей для разных катушек;
+            * **SCENARIO_NAME** - Наименование катушки;
+            * **STEPS** - Шаги профиля: **STAR_TPS** - подаваемая нагрузка (с какого значения начинаем), **END_TPS** - подаваемая нагрузка (на какое значение выходим), **RAMP_TIME** - выход на заданную интенсивность (мин) и **HOLD_TIME** - удержание нагрузки (мин);
+    * **PROPERTIES** - Дополнительные параметры для теста.
+
+
+* **COMMON_SETTINGS** - Параметры для всех тестов;
+    * **MAVEN** - Параметры для bash скрипта;
+        * **MODULE_NAME** - Название модуля (используется для сбора логов);
+        * **PERCENT_PROFILE** - Процент от профиля;
+    * **PROPERTIES** - Дополнительные общие параметры для всех тестов.
 
 ## Запуск тестов через CLI
 
@@ -148,6 +234,13 @@ DROP MEASUREMENT gatling
 
 ## Запуск тестов через Jenkins
 
+Настройка Jenkins Agents
+
+```bash
+curl -sO http://localhost:8080/jnlpJars/agent.jar;
+java -jar agent.jar -url http://localhost:8080/ -secret 123 -name test -webSocket -workDir "/home/jenkins/agent"
+```
+
 Для запуска нагрузочных тестов используется Json.
 
 ![jenkins.png](img/jenkins.png)
@@ -155,75 +248,8 @@ DROP MEASUREMENT gatling
 Пример Json профиля нагрузки:
 
 ```json
-{
-  "TESTS_PARAM": [
-    {
-      "JOB": {
-        "JVM_ARGS": "-Xms1g -Xmx2g",
-        "PARALLELISM_MAX": 10,
-        "GENERATOR": "load_generator",
-        "TEST_NAME": "AuthorizationAdminTest",
-        "TEST_PATH": "gatling.users.authorization"
-      },
-      "PROFILE": [
-        {
-          "SCENARIO_NAME": "AUTHORIZATION_USER_SCENARIO",
-          "STEPS": [
-            {
-              "STAR_TPS": 0.0,
-              "END_TPS": 1.0,
-              "RAMP_TIME": 1.0,
-              "HOLD_TIME": 2.0
-            },
-            {
-              "STAR_TPS": 0.0,
-              "END_TPS": 1.0,
-              "RAMP_TIME": 1.0,
-              "HOLD_TIME": 2.0
-            }
-          ]
-        }
-      ],
-      "PROPERTIES": {
-        "GROUP": "2"
-      }
-    }
-  ],
-  "COMMON_SETTINGS": {
-    "MAVEN": {
-      "MODULE_NAME": "USERS",
-      "PERCENT_PROFILE": 100.0
-    },
-    "PROPERTIES": {
-      "DEBUG_ENABLE": "true",
-      "REDIS_KEY_READ": "users_credentials"
-    }
-  }
-}
+
 ```
-
-Описание параметров:
-"JVM_ARGS": "-Xms1g -Xmx2g",
-
-* **TESTS_PARAM** - Параметры тестов;
-  * **JOB** - Параметры для Java машины;
-    * **JVM_ARGS** - Ограничение по ОЗУ;
-    * **PARALLELISM_MAX** - Ограничение максимального количества потоков;
-    * **GENERATOR** - Где будет запускаться тесты;
-    * **TEST_NAME** - Наименования тестового класса;
-    * **TEST_FOLDER** - Путь до класса в проекте;
-  * **PROFILE** - Параметры профиля нагрузки;
-    * **Array profile** - Массив профилей для разных катушек;
-      * **SCENARIO_NAME** - Наименование катушки;
-      * **STEPS** - Шаги профиля: **STAR_TPS** - подаваемая нагрузка (с какого значения начинаем), **END_TPS** - подаваемая нагрузка (на какое значение выходим), **RAMP_TIME** - выход на заданную интенсивность (мин) и **HOLD_TIME** - удержание нагрузки (мин);
-  * **PROPERTIES** - Дополнительные параметры для теста.
-
-
-* **COMMON_SETTINGS** - Параметры для всех тестов;
-  * **MAVEN** - Параметры для bash скрипта;
-    * **MODULE_NAME** - Название модуля (используется для сбора логов);
-    * **PERCENT_PROFILE** - Процент от профиля;
-  * **PROPERTIES** - Дополнительные общие параметры для всех тестов.
 
 ## Запуск тестов через Gitlab
 
@@ -234,70 +260,8 @@ DROP MEASUREMENT gatling
 Пример Json профиля нагрузки:
 
 ```json
-{
-  "TESTS_PARAM": [
-    {
-      "JOB": {
-        "GENERATOR": "test",
-        "TEST_NAME": "AuthorizationAdminTest",
-        "TEST_PATH": "gatling.users.authorization"
-      },
-      "PROFILE": [
-        {
-          "SCENARIO_NAME": "AUTHORIZATION_ADMIN_SCENARIO",
-          "STEPS": [
-            {
-              "STAR_TPS": 0.0,
-              "END_TPS": 1.0,
-              "RAMP_TIME": 0.5,
-              "HOLD_TIME": 1.0
-            },
-            {
-              "STAR_TPS": 1.0,
-              "END_TPS": 1.5,
-              "RAMP_TIME": 1.0,
-              "HOLD_TIME": 1.0
-            }
-          ]
-        }
-      ],
-      "PROPERTIES": {
-        "GROUP": "2"
-      }
-    }
-  ],
-  "COMMON_SETTINGS": {
-    "MAVEN": {
-      "MODULE_NAME": "USERS",
-      "PERCENT_PROFILE": 100.0
-    },
-    "PROPERTIES": {
-      "DEBUG_ENABLE": "false",
-      "REDIS_KEY_READ": "users_credentials"
-    }
-  }
-}
+
 ```
-
-Описание параметров:
-
-* **TESTS_PARAM** - Параметры тестов;
-  * **JOB** - Параметры для Java машины;
-    * **GENERATOR** - Где будут запускаться тесты;
-    * **TEST_NAME** - Наименования тестового класса;
-    * **TEST_FOLDER** - Путь до класса в проекте;
-  * **PROFILE** - Параметры профиля нагрузки;
-    * **Array profile** - Массив профилей для разных катушек;
-      * **SCENARIO_NAME** - Наименование катушки;
-      * **STEPS** - Шаги профиля: **STAR_TPS** - подаваемая нагрузка (с какого значения начинаем), **END_TPS** - подаваемая нагрузка (на какое значение выходим), **RAMP_TIME** - выход на заданную интенсивность (мин) и **HOLD_TIME** - удержание нагрузки (мин);
-  * **PROPERTIES** - Дополнительные параметры для теста.
-
-
-* **COMMON_SETTINGS** - Параметры для все тестов;
-  * **MAVEN** - Параметры для bash скрипта;
-    * **MODULE_NAME** - Название модуля (используется для сбора логов);
-    * **PERCENT_PROFILE** - Процент от профиля;
-  * **PROPERTIES** - Дополнительные общие параметры для всех тестов.
 
 
 ### Запуск тестов через Python + Gitlab
@@ -349,14 +313,18 @@ sudo docker compose up
         enabled = true
         database = "gatlingdb"
 
-        templates = [
-                "gatling.*.*.*.* measurement.simulation.group.request.status.field"
-        ]
+templates = [
+        "gatling.*.*.users.*.* measurement.loadGenerator.simulation.measurement.scenario.field",
+        "gatling.*.*.allRequests.*.* measurement.loadGenerator.simulation.measurement.status.field",
+        "gatling.*.*.*.*.*.* measurement.loadGenerator.simulation.group.request.status.field"
+]
 ```
+
+### Вспомогательные классы
 
 **Что нужно добавить в демо проект:**
 
 1. **Добавить таблицу по запросам (Название транзакции, количество запросов, процент успешных запрос, процент ошибочных запросов);**
 2. В python скрипте выводить время теста (как в jenkins job);
 3. Записывать логи запуска python скрипта в файл;
-4. Попробовать Redis (не через rust-redis-client);
+4. Попробовать Redis (не через rust-redis-client).

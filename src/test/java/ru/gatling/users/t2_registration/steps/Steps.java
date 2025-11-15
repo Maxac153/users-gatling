@@ -1,4 +1,4 @@
-package ru.gatling.users.registration.steps;
+package ru.gatling.users.t2_registration.steps;
 
 import io.gatling.javaapi.core.ChainBuilder;
 import io.gatling.javaapi.core.CoreDsl;

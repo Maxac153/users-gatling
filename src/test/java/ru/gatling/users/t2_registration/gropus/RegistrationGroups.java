@@ -1,11 +1,11 @@
-package ru.gatling.users.registration.gropus;
+package ru.gatling.users.t2_registration.gropus;
 
 import io.gatling.javaapi.core.ChainBuilder;
 import ru.gatling.__common.helpers.RedisClientHelper;
 import ru.gatling.__common.steps.HttpCommonSteps;
 import ru.gatling.models.redis.RedisAddMode;
-import ru.gatling.users.registration.helper.RegistrationUserRandomHelper;
-import ru.gatling.users.registration.steps.Steps;
+import ru.gatling.users.t2_registration.helper.RegistrationUserRandomHelper;
+import ru.gatling.users.t2_registration.steps.Steps;
 
 import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.group;

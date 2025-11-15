@@ -24,10 +24,11 @@ public class TestDebugRun extends Simulation {
             }.getType();
             HashMap<String, String> testSettings = GSON.fromJson(System.getProperty("TEST_SETTINGS").replace("\"", ""), type);
             Class<?> classSimulation = Class.forName(System.getProperty("CLASS_SIMULATION"));
-            Method method = classSimulation.getMethod("run", Map.class, ArrayList.class);
+            Method method = classSimulation.getMethod("run", Map.class, Map.class, ArrayList.class);
             return (PopulationBuilder) method.invoke(
                     classSimulation.getDeclaredConstructor().newInstance(),
                     testSettings,
+                    null,
                     null
             );
         } catch (Exception e) {

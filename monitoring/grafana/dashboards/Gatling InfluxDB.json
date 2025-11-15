@@ -1,4 +1,47 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_INFLUXDB",
+      "label": "influxdb",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "influxdb",
+      "pluginName": "InfluxDB"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "12.0.2"
+    },
+    {
+      "type": "datasource",
+      "id": "influxdb",
+      "name": "InfluxDB",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -18,7 +61,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": null,
   "links": [],
   "panels": [
     {
@@ -108,7 +151,7 @@
           "alias": "$tag_scenario",
           "datasource": {
             "type": "influxdb",
-            "uid": "${datasource}"
+            "uid": "${DS_INFLUXDB}"
           },
           "groupBy": [
             {
@@ -130,7 +173,7 @@
               "type": "fill"
             }
           ],
-          "measurement": "gatling.users",
+          "measurement": "/^$measurement.users/",
           "orderByTime": "ASC",
           "policy": "default",
           "query": "",
@@ -262,7 +305,7 @@
           "alias": "Total",
           "datasource": {
             "type": "influxdb",
-            "uid": "${datasource}"
+            "uid": "${DS_INFLUXDB}"
           },
           "groupBy": [
             {
@@ -278,11 +321,11 @@
               "type": "fill"
             }
           ],
-          "measurement": "gatling.users",
+          "measurement": "/^$measurement.users/",
           "orderByTime": "ASC",
           "policy": "default",
           "query": "SELECT mean(\"active\") FROM \"gatling.users\" WHERE (\"scenario\"::tag =~ /.*${system}.*/ AND \"loadGenerator\"::tag =~ /^$load_generator$/ AND \"scenario\"::tag != 'allUsers') AND $timeFilter GROUP BY time(10s) fill(null)",
-          "rawQuery": true,
+          "rawQuery": false,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -402,9 +445,9 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "${datasource}"
+            "uid": "${DS_INFLUXDB}"
           },
-          "query": "SELECT 100 * sum(\"ok\") / sum(\"all\")\nFROM \n    (SELECT sum(\"count\") as \"all\" FROM \"gatling\" WHERE (\"status\" = 'all' AND \"request\" =~ /.*${system}*./ AND \"loadGenerator\"::tag =~ /^$load_generator$/) AND $timeFilter GROUP BY time($__interval) fill(null)),\n    (SELECT sum(\"count\") as \"ok\" FROM \"gatling\" WHERE (\"status\" = 'ok' AND \"request\" =~ /.*${system}*./ AND \"loadGenerator\"::tag =~ /^$load_generator$/) AND $timeFilter GROUP BY time($__interval) fill(null))\n",
+          "query": "SELECT 100 * sum(\"ok\") / sum(\"all\")\nFROM \n    (SELECT sum(\"count\") as \"all\" FROM \"$measurement\" WHERE (\"status\" = 'all' AND \"request\" =~ /.*${system}*./ AND \"loadGenerator\"::tag =~ /^$load_generator$/) AND $timeFilter GROUP BY time($__interval) fill(null)),\n    (SELECT sum(\"count\") as \"ok\" FROM \"$measurement\" WHERE (\"status\" = 'ok' AND \"request\" =~ /.*${system}*./ AND \"loadGenerator\"::tag =~ /^$load_generator$/) AND $timeFilter GROUP BY time($__interval) fill(null))\n",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series"
@@ -465,9 +508,9 @@
         {
           "datasource": {
             "type": "influxdb",
-            "uid": "${datasource}"
+            "uid": "${DS_INFLUXDB}"
           },
-          "query": "SELECT 100 * sum(\"ko\") / sum(\"all\")\nFROM \n    (SELECT sum(\"count\") as \"all\" FROM \"gatling\" WHERE (\"status\" = 'all' AND \"request\" =~ /.*${system}*./ AND \"loadGenerator\"::tag =~ /^$load_generator$/) AND $timeFilter GROUP BY time($__interval) fill(null)),\n    (SELECT sum(\"count\") as \"ko\" FROM \"gatling\" WHERE (\"status\" = 'ko' AND \"request\" =~ /.*${system}*./ AND \"loadGenerator\"::tag =~ /^$load_generator$/) AND $timeFilter GROUP BY time($__interval) fill(null))\n",
+          "query": "SELECT 100 * sum(\"ko\") / sum(\"all\")\nFROM \n    (SELECT sum(\"count\") as \"all\" FROM \"$measurement\" WHERE (\"status\" = 'all' AND \"request\" =~ /.*${system}*./ AND \"loadGenerator\"::tag =~ /^$load_generator$/) AND $timeFilter GROUP BY time($__interval) fill(null)),\n    (SELECT sum(\"count\") as \"ko\" FROM \"$measurement\" WHERE (\"status\" = 'ko' AND \"request\" =~ /.*${system}*./ AND \"loadGenerator\"::tag =~ /^$load_generator$/) AND $timeFilter GROUP BY time($__interval) fill(null))\n",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series"
@@ -564,7 +607,7 @@
           "alias": "Total (UC)",
           "datasource": {
             "type": "influxdb",
-            "uid": "${datasource}"
+            "uid": "${DS_INFLUXDB}"
           },
           "groupBy": [
             {
@@ -586,7 +629,7 @@
               "type": "fill"
             }
           ],
-          "measurement": "gatling",
+          "measurement": "/^$measurement$/",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "A",
@@ -658,7 +701,7 @@
             }
           ],
           "hide": false,
-          "measurement": "gatling",
+          "measurement": "/^$measurement$/",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "B",
@@ -739,7 +782,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "${datasource}"
+        "uid": "${DS_INFLUXDB}"
       },
       "description": "Количество неуспешных запросов в секунду.",
       "fieldConfig": {
@@ -846,7 +889,7 @@
               "type": "fill"
             }
           ],
-          "measurement": "gatling",
+          "measurement": "/^$measurement$/",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "A",
@@ -895,7 +938,7 @@
           "alias": "Total (UR)",
           "datasource": {
             "type": "influxdb",
-            "uid": "${datasource}"
+            "uid": "${DS_INFLUXDB}"
           },
           "groupBy": [
             {
@@ -918,7 +961,7 @@
             }
           ],
           "hide": false,
-          "measurement": "gatling",
+          "measurement": "/^$measurement$/",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "B",
@@ -1094,7 +1137,7 @@
               "alias": "$tag_group",
               "datasource": {
                 "type": "influxdb",
-                "uid": "${datasource}"
+                "uid": "${DS_INFLUXDB}"
               },
               "groupBy": [
                 {
@@ -1116,7 +1159,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "gatling",
+              "measurement": "/^$measurement$/",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -1253,7 +1296,7 @@
               "alias": "$tag_group",
               "datasource": {
                 "type": "influxdb",
-                "uid": "${datasource}"
+                "uid": "${DS_INFLUXDB}"
               },
               "groupBy": [
                 {
@@ -1275,7 +1318,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "gatling",
+              "measurement": "/^$measurement$/",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -1425,7 +1468,7 @@
               "alias": "$tag_group",
               "datasource": {
                 "type": "influxdb",
-                "uid": "${datasource}"
+                "uid": "${DS_INFLUXDB}"
               },
               "groupBy": [
                 {
@@ -1450,7 +1493,7 @@
               "measurement": "gatling",
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "SELECT sum(\"percentiles50\")\nFROM (\nSELECT max(\"percentiles50\") AS \"percentiles50\"\nFROM \"gatling\" \n    WHERE (\"group\"::tag =~ /.*${system}.*/ AND \"loadGenerator\"::tag =~ /^$load_generator$/) AND $timeFilter\n    GROUP BY time(10s), \"group\"::tag, \"request\"::tag fill(null)\n)\nGROUP BY time(10s), \"group\"::tag fill(null)",
+              "query": "SELECT sum(\"percentiles50\")\nFROM (\nSELECT max(\"percentiles50\") AS \"percentiles50\"\nFROM \"$measurement\" \n    WHERE (\"group\"::tag =~ /.*${system}.*/ AND \"loadGenerator\"::tag =~ /^$load_generator$/) AND $timeFilter\n    GROUP BY time(10s), \"group\"::tag, \"request\"::tag fill(null)\n)\nGROUP BY time(10s), \"group\"::tag fill(null)",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -1573,7 +1616,7 @@
               "alias": "$tag_group",
               "datasource": {
                 "type": "influxdb",
-                "uid": "${datasource}"
+                "uid": "${DS_INFLUXDB}"
               },
               "groupBy": [
                 {
@@ -1605,7 +1648,7 @@
               "measurement": "gatling",
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "SELECT sum(\"percentiles75\")\nFROM (\nSELECT max(\"percentiles75\") AS \"percentiles75\"\nFROM \"gatling\" \n    WHERE (\"group\"::tag =~ /.*${system}.*/ AND \"loadGenerator\"::tag =~ /^$load_generator$/) AND $timeFilter\n    GROUP BY time(10s), \"group\"::tag, \"request\"::tag fill(null)\n)\nGROUP BY time(10s), \"group\"::tag fill(null)",
+              "query": "SELECT sum(\"percentiles75\")\nFROM (\nSELECT max(\"percentiles75\") AS \"percentiles75\"\nFROM \"$measurement\" \n    WHERE (\"group\"::tag =~ /.*${system}.*/ AND \"loadGenerator\"::tag =~ /^$load_generator$/) AND $timeFilter\n    GROUP BY time(10s), \"group\"::tag, \"request\"::tag fill(null)\n)\nGROUP BY time(10s), \"group\"::tag fill(null)",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -1702,7 +1745,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 23
+            "y": 57
           },
           "id": 32,
           "options": {
@@ -1728,7 +1771,7 @@
               "alias": "$tag_group",
               "datasource": {
                 "type": "influxdb",
-                "uid": "${datasource}"
+                "uid": "${DS_INFLUXDB}"
               },
               "groupBy": [
                 {
@@ -1753,7 +1796,7 @@
               "measurement": "gatling",
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "SELECT sum(\"percentiles95\")\nFROM (\nSELECT max(\"percentiles95\") AS \"percentiles95\"\nFROM \"gatling\" \n    WHERE (\"group\"::tag =~ /.*${system}.*/ AND \"loadGenerator\"::tag =~ /^$load_generator$/) AND $timeFilter\n    GROUP BY time(10s), \"group\"::tag, \"request\"::tag fill(null)\n)\nGROUP BY time(10s), \"group\"::tag fill(null)",
+              "query": "SELECT sum(\"percentiles95\")\nFROM (\nSELECT max(\"percentiles95\") AS \"percentiles95\"\nFROM \"$measurement\" \n    WHERE (\"group\"::tag =~ /.*${system}.*/ AND \"loadGenerator\"::tag =~ /^$load_generator$/) AND $timeFilter\n    GROUP BY time(10s), \"group\"::tag, \"request\"::tag fill(null)\n)\nGROUP BY time(10s), \"group\"::tag fill(null)",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -1850,7 +1893,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 23
+            "y": 57
           },
           "id": 33,
           "options": {
@@ -1876,7 +1919,7 @@
               "alias": "$tag_group",
               "datasource": {
                 "type": "influxdb",
-                "uid": "${datasource}"
+                "uid": "${DS_INFLUXDB}"
               },
               "groupBy": [
                 {
@@ -1901,7 +1944,7 @@
               "measurement": "gatling",
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "SELECT sum(\"percentiles99\")\nFROM (\nSELECT max(\"percentiles99\") AS \"percentiles99\"\nFROM \"gatling\" \n    WHERE (\"group\"::tag =~ /.*${system}.*/ AND \"loadGenerator\"::tag =~ /^$load_generator$/) AND $timeFilter\n    GROUP BY time(10s), \"group\"::tag, \"request\"::tag fill(null)\n)\nGROUP BY time(10s), \"group\"::tag fill(null)",
+              "query": "SELECT sum(\"percentiles99\")\nFROM (\nSELECT max(\"percentiles99\") AS \"percentiles99\"\nFROM \"$measurement\" \n    WHERE (\"group\"::tag =~ /.*${system}.*/ AND \"loadGenerator\"::tag =~ /^$load_generator$/) AND $timeFilter\n    GROUP BY time(10s), \"group\"::tag, \"request\"::tag fill(null)\n)\nGROUP BY time(10s), \"group\"::tag fill(null)",
               "rawQuery": true,
               "refId": "A",
               "resultFormat": "time_series",
@@ -2253,7 +2296,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 136
+            "y": 16
           },
           "id": 40,
           "options": {
@@ -2275,7 +2318,7 @@
             {
               "datasource": {
                 "type": "influxdb",
-                "uid": "${datasource}"
+                "uid": "${DS_INFLUXDB}"
               },
               "groupBy": [
                 {
@@ -2409,7 +2452,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 179
+            "y": 17
           },
           "id": 34,
           "options": {
@@ -2435,7 +2478,7 @@
               "alias": "$tag_request",
               "datasource": {
                 "type": "influxdb",
-                "uid": "${datasource}"
+                "uid": "${DS_INFLUXDB}"
               },
               "groupBy": [
                 {
@@ -2457,7 +2500,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "gatling",
+              "measurement": "/^$measurement$/",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -2568,7 +2611,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 179
+            "y": 17
           },
           "id": 35,
           "options": {
@@ -2594,7 +2637,7 @@
               "alias": "$tag_request",
               "datasource": {
                 "type": "influxdb",
-                "uid": "${datasource}"
+                "uid": "${DS_INFLUXDB}"
               },
               "groupBy": [
                 {
@@ -2616,7 +2659,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "gatling",
+              "measurement": "/^$measurement$/",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -2740,7 +2783,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 34
+            "y": 18
           },
           "id": 36,
           "options": {
@@ -2766,7 +2809,7 @@
               "alias": "$tag_request",
               "datasource": {
                 "type": "influxdb",
-                "uid": "${datasource}"
+                "uid": "${DS_INFLUXDB}"
               },
               "groupBy": [
                 {
@@ -2788,7 +2831,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "gatling",
+              "measurement": "/^$measurement$/",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -2886,7 +2929,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 34
+            "y": 18
           },
           "id": 37,
           "options": {
@@ -2912,7 +2955,7 @@
               "alias": "$tag_request",
               "datasource": {
                 "type": "influxdb",
-                "uid": "${datasource}"
+                "uid": "${DS_INFLUXDB}"
               },
               "groupBy": [
                 {
@@ -2934,7 +2977,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "gatling",
+              "measurement": "/^$measurement$/",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -3032,7 +3075,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 42
+            "y": 26
           },
           "id": 38,
           "options": {
@@ -3058,7 +3101,7 @@
               "alias": "$tag_request",
               "datasource": {
                 "type": "influxdb",
-                "uid": "${datasource}"
+                "uid": "${DS_INFLUXDB}"
               },
               "groupBy": [
                 {
@@ -3080,7 +3123,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "gatling",
+              "measurement": "/^$measurement$/",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -3178,7 +3221,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 42
+            "y": 26
           },
           "id": 39,
           "options": {
@@ -3204,7 +3247,7 @@
               "alias": "$tag_request",
               "datasource": {
                 "type": "influxdb",
-                "uid": "${datasource}"
+                "uid": "${DS_INFLUXDB}"
               },
               "groupBy": [
                 {
@@ -3226,7 +3269,7 @@
                   "type": "fill"
                 }
               ],
-              "measurement": "gatling",
+              "measurement": "/^$measurement$/",
               "orderByTime": "ASC",
               "policy": "default",
               "refId": "A",
@@ -3268,7 +3311,6 @@
       "type": "row"
     }
   ],
-  "preload": false,
   "refresh": "30s",
   "schemaVersion": 41,
   "tags": [
@@ -3279,10 +3321,7 @@
   "templating": {
     "list": [
       {
-        "current": {
-          "text": "influxdb",
-          "value": "ferz57eoyd2iof"
-        },
+        "current": {},
         "description": "",
         "includeAll": false,
         "name": "datasource",
@@ -3291,6 +3330,24 @@
         "refresh": 1,
         "regex": "/influxdb/",
         "type": "datasource"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "influxdb",
+          "uid": "${datasource}"
+        },
+        "definition": "SHOW MEASUREMENTS",
+        "includeAll": false,
+        "name": "measurement",
+        "options": [],
+        "query": {
+          "query": "SHOW MEASUREMENTS",
+          "refId": "InfluxVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
       },
       {
         "auto": false,
@@ -3332,7 +3389,7 @@
           "text": "users",
           "value": "users"
         },
-        "includeAll": false,
+        "includeAll": true,
         "name": "system",
         "options": [
           {
@@ -3350,26 +3407,24 @@
         "type": "custom"
       },
       {
-        "current": {
-          "text": "localhost",
-          "value": "localhost"
-        },
-        "includeAll": false,
+        "current": {},
+        "definition": "SHOW TAG FROM \"${measurement}\" WITH KEY = \"generator\"",
+        "includeAll": true,
+        "multi": true,
         "name": "load_generator",
-        "options": [
-          {
-            "selected": true,
-            "text": "localhost",
-            "value": "localhost"
-          }
-        ],
-        "query": "localhost",
-        "type": "custom"
+        "options": [],
+        "query": {
+          "query": "SHOW TAG FROM \"${measurement}\" WITH KEY = \"generator\"",
+          "refId": "InfluxVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
       }
     ]
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
@@ -3388,5 +3443,6 @@
   "timezone": "browser",
   "title": "Gatling InfluxDB",
   "uid": "eea2vorlot62oc",
-  "version": 31
+  "version": 36,
+  "weekStart": ""
 }

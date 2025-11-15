@@ -1,4 +1,4 @@
-package ru.gatling.users.authorization.scenario;
+package ru.gatling.users.t1_authorization.scenario;
 
 import io.gatling.javaapi.core.CoreDsl;
 import io.gatling.javaapi.core.ScenarioBuilder;

@@ -36,6 +36,7 @@ public class GeneratePregenerationProfile {
 
         // 1. Map REDIS_KEY_READ -> REDIS_KEY_ADD (non-null, different)
         Map<String, String> readToAddMap = testParams.values().stream()
+                .filter(tp -> tp.getProfiles() != null) // filter out TestParam objects with null profiles
                 .map(TestParam::getProperties)
                 .filter(Objects::nonNull)
                 .filter(p -> p.containsKey("REDIS_KEY_READ") && p.containsKey("REDIS_KEY_ADD"))
@@ -48,6 +49,7 @@ public class GeneratePregenerationProfile {
 
         // 2. Compute sums for each REDIS_KEY_READ
         Map<String, Long> testData = testParams.values().stream()
+                .filter(tp -> tp.getProfiles() != null)
                 .collect(Collectors.toMap(
                         tp -> tp.getProperties().get("REDIS_KEY_READ").toString(),
                         tp -> {
@@ -174,9 +176,6 @@ public class GeneratePregenerationProfile {
             log.error("Error Save Profile: {}", e.getMessage());
             throw new RuntimeException(e);
         }
-
-        log.info("Pregeneration Profile:");
-        log.info(GSON.toJson(testsParam));
     }
 
     // Recursive DFS for topological sort & depth calculation with cycle detection

@@ -1,18 +1,23 @@
-package ru.gatling.users.authorization;
+package ru.gatling.users.t2_registration;
 
-import io.gatling.javaapi.core.*;
+import io.gatling.javaapi.core.ClosedInjectionStep;
+import io.gatling.javaapi.core.PopulationBuilder;
+import io.gatling.javaapi.core.ScenarioBuilder;
+import io.gatling.javaapi.core.Simulation;
 import io.gatling.javaapi.http.HttpDsl;
 import io.gatling.javaapi.http.HttpProtocolBuilder;
 import ru.gatling.__common.helpers.Runnable;
 import ru.gatling.helpers.PropertyHelper;
 import ru.gatling.models.profile.Profile;
-import ru.gatling.users.authorization.scenario.AuthorizationScenario;
+import ru.gatling.users.t2_registration.scenario.RegistrationScenario;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AuthorizationUserTest extends Simulation implements Runnable {
+import static io.gatling.javaapi.core.CoreDsl.atOnceUsers;
+
+public class RegistrationTest extends Simulation implements Runnable {
     @Override
     public PopulationBuilder run(
             String scenarioName,
@@ -25,20 +30,21 @@ public class AuthorizationUserTest extends Simulation implements Runnable {
                 "__common/redis_properties.json"
         );
 
-        HashMap<String, OpenInjectionStep[]> profile = PropertyHelper.getOpenProfile(testProfile);
+        HashMap<String, ClosedInjectionStep[]> profile = PropertyHelper.getClosedProfile(testProfile, properties);
 
         HttpProtocolBuilder httpProtocol = HttpDsl.http
                 .baseUrl(properties.get("PROTOCOL") + "://" + properties.get("HOST"))
                 .disableCaching()
                 .userAgentHeader("Gatling/Performance Test");
 
-        ScenarioBuilder scenarioBuilder = AuthorizationScenario.authorizationUserScenario(
+        ScenarioBuilder scenarioBuilder = RegistrationScenario.registration(
                 scenarioName, properties, "REGISTRATION_SCENARIO"
         );
 
         if (!Boolean.parseBoolean(properties.get("DEBUG_ENABLE").toString())) {
-            return scenarioBuilder.injectOpen(profile.get("REGISTRATION_SCENARIO")).protocols(httpProtocol);
+            return scenarioBuilder.injectClosed(profile.get("REGISTRATION_SCENARIO")).protocols(httpProtocol);
         }
-        return scenarioBuilder.injectOpen(CoreDsl.atOnceUsers(1));
+        return scenarioBuilder.injectOpen(atOnceUsers(1));
     }
+
 }

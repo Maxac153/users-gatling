@@ -31,6 +31,9 @@ public class TestDebugRunner {
         String javaPath = System.getProperty("JAVA_PATH");
         String jarPath = System.getProperty("JAR_PATH");
         String moduleName = System.getProperty("MODULE_NAME", "DEBUG");
+        String graphiteHost = System.getProperty("GRAPHITE_HOST");
+        String graphitePort = System.getProperty("GRAPHITE_PORT");
+        String loadGenerator = System.getProperty("LOAD_GENERATOR");
         String dateNow = System.getProperty("DATE_NOW", "1970-01-01");
         String dateTimeNow = System.getProperty("DATE_TIME_NOW", "1970-01-01_00-00-00");
         ArrayList<String> testCase = ReadFileHelper.readTxt(System.getProperty("TEST_CASE_PATH"));
@@ -50,6 +53,9 @@ public class TestDebugRunner {
                         javaPath,
                         jarPath,
                         moduleName,
+                        graphiteHost,
+                        graphitePort,
+                        loadGenerator,
                         dateNow,
                         dateTimeNow
                 ));
@@ -84,7 +90,7 @@ public class TestDebugRunner {
                 throw new Exception("Test Debug Failed!");
             }
         } else {
-            log.error("Incorrect Number Of Variables <Java Path> <Jar Path> <Path Test Cases> <Path Class Simulation> <Number Threads>");
+            log.error("Incorrect Number Of Variables!");
         }
     }
 
@@ -94,6 +100,9 @@ public class TestDebugRunner {
             String javaPath,
             String jarPath,
             String moduleName,
+            String graphiteHost,
+            String graphitePort,
+            String loadGenerator,
             String dateNow,
             String dateTimeNow
     ) {
@@ -119,6 +128,9 @@ public class TestDebugRunner {
                     Process process = Runtime.getRuntime()
                             .exec(javaPath
                                     + " -DMODULE_NAME=" + moduleName
+                                    + " -DGRAPHITE_HOST=" + graphiteHost
+                                    + " -DGRAPHITE_PORT=" + graphitePort
+                                    + " -DLOAD_GENERATOR=" + loadGenerator
                                     + " -DATE_NOW=" + dateNow
                                     + " -DDATE_TIME_NOW=" + dateTimeNow
                                     + " -DLOG_FILE_NAME=test_case-" + testName
@@ -147,7 +159,7 @@ public class TestDebugRunner {
                     ).exists(redisKey);
 
                     if (!exists) {
-                        log.error("Status: ERROR, Test Case: " + testName + " , Test: " + tests[i]);
+                        log.error("Status: ERROR, Test Case: {} , Test: {}", testName, tests[i]);
                         FLAG_ERROR.set(true);
                         break;
                     }
@@ -156,7 +168,7 @@ public class TestDebugRunner {
                 }
             }
             if (exists) {
-                log.info("Status: SUCCESSFUL, Test Case: " + testName);
+                log.info("Status: SUCCESSFUL, Test Case: {}", testName);
             }
         }
     }

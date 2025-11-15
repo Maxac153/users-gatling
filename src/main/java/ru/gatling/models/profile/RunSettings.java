@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 public class RunSettings {
-    @SerializedName("BUILD_JAR_ENABLE")
-    Boolean buildJarEnable;
+    @SerializedName("PROFILE_NAME")
+    private String profileName;
     @SerializedName("MODULE_NAME")
     private String moduleName;
     @SerializedName("LEVEL_CONSOLE_LOG")

@@ -2,6 +2,7 @@ package ru.gatling;
 
 import io.gatling.javaapi.core.PopulationBuilder;
 import io.gatling.javaapi.core.Simulation;
+import ru.gatling.helpers.LoggerHelper;
 import ru.gatling.helpers.ReadFileHelper;
 import ru.gatling.models.profile.Profile;
 import ru.gatling.models.profile.TestParam;
@@ -13,7 +14,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ru.gatling.helpers.LoggerHelper.logProfileDurationMaxInfo;
 import static ru.gatling.helpers.LoggerHelper.logProfileInfo;
 
 public class TestRunner extends Simulation {
@@ -37,14 +37,14 @@ public class TestRunner extends Simulation {
         HashMap<String, Object> commonSettings = testsParam.getCommonSettings().getProperties();
         boolean debugEnable = Boolean.parseBoolean(commonSettings.get("DEBUG_ENABLE").toString());
 
-        Profile scenarioDurationMax = testsParam.getTestParam().values().stream()
+        testsParam.getTestParam().values().stream()
+                .filter(testParam -> testParam.getProfiles() != null)
                 .flatMap(testParam -> testParam.getProfiles().stream())
                 .max(Comparator.comparingDouble(profile ->
                         profile.getSteps().stream()
                                 .mapToDouble(step -> step.getHoldTime() + step.getRampTime())
                                 .sum()
-                ))
-                .orElse(null);
+                )).ifPresent(LoggerHelper::logProfileDurationMaxInfo);
 
         for (Map.Entry<String, TestParam> entry : testsParam.getTestParam().entrySet()) {
             String scenarioName = entry.getKey();
@@ -59,7 +59,9 @@ public class TestRunner extends Simulation {
 
                 if (!debugEnable) {
                     for (Profile profile : testParam.getProfiles()) {
-                        logProfileInfo(profile);
+                        if (profile != null) {
+                            logProfileInfo(profile);
+                        }
                     }
                 }
 
@@ -70,8 +72,6 @@ public class TestRunner extends Simulation {
             }
         }
 
-
-        logProfileDurationMaxInfo(scenarioDurationMax);
         return POPULATION_BUILDERS;
     }
 }

@@ -1,23 +1,18 @@
-package ru.gatling.users.registration;
+package ru.gatling.users.t1_authorization;
 
-import io.gatling.javaapi.core.ClosedInjectionStep;
-import io.gatling.javaapi.core.PopulationBuilder;
-import io.gatling.javaapi.core.ScenarioBuilder;
-import io.gatling.javaapi.core.Simulation;
+import io.gatling.javaapi.core.*;
 import io.gatling.javaapi.http.HttpDsl;
 import io.gatling.javaapi.http.HttpProtocolBuilder;
 import ru.gatling.__common.helpers.Runnable;
 import ru.gatling.helpers.PropertyHelper;
 import ru.gatling.models.profile.Profile;
-import ru.gatling.users.registration.scenario.RegistrationScenario;
+import ru.gatling.users.t1_authorization.scenario.AuthorizationScenario;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.gatling.javaapi.core.CoreDsl.atOnceUsers;
-
-public class RegistrationTest extends Simulation implements Runnable {
+public class AuthorizationAdminTest extends Simulation implements Runnable {
     @Override
     public PopulationBuilder run(
             String scenarioName,
@@ -26,25 +21,23 @@ public class RegistrationTest extends Simulation implements Runnable {
     ) {
         Map<String, Object> properties = PropertyHelper.readProperties(
                 testSettings,
-                "__common/common_properties.json",
-                "__common/redis_properties.json"
+                "__common/common_properties.json"
         );
 
         HashMap<String, ClosedInjectionStep[]> profile = PropertyHelper.getClosedProfile(testProfile, properties);
 
         HttpProtocolBuilder httpProtocol = HttpDsl.http
-                .baseUrl(properties.get("PROTOCOL") + "://" + properties.get("HOST"))
+                .baseUrl("http://localhost:8080/login?from=%2F")
                 .disableCaching()
                 .userAgentHeader("Gatling/Performance Test");
 
-        ScenarioBuilder scenarioBuilder = RegistrationScenario.registration(
-                scenarioName, properties, "REGISTRATION_SCENARIO"
+        ScenarioBuilder scenarioBuilder = AuthorizationScenario.authorizationAdminScenario(
+                scenarioName, properties, "AUTHORIZATION_ADMIN_SCENARIO"
         );
 
         if (!Boolean.parseBoolean(properties.get("DEBUG_ENABLE").toString())) {
-            return scenarioBuilder.injectClosed(profile.get("REGISTRATION_SCENARIO")).protocols(httpProtocol);
+            return scenarioBuilder.injectClosed(profile.get("AUTHORIZATION_ADMIN_SCENARIO")).protocols(httpProtocol);
         }
-        return scenarioBuilder.injectOpen(atOnceUsers(1));
+        return scenarioBuilder.injectOpen(CoreDsl.atOnceUsers(1));
     }
-
 }
